@@ -1,0 +1,72 @@
+button {
+  @apply outline-none px-4 py-2 rounded-sm text-white cursor-pointer;
+}
+
+button.primary,
+button.primary.outline:hover:not([disabled]) {
+  @apply bg-primary-dark;
+}
+
+button.secondary,
+button.secondary.outline:hover:not([disabled]) {
+  @apply bg-secondary;
+}
+
+button.success,
+button.success.outline:hover:not([disabled]) {
+  @apply bg-success;
+}
+
+button.danger,
+button.danger.outline:hover:not([disabled]) {
+  @apply bg-danger;
+}
+
+button:hover:not([disabled]) {
+  @apply text-white;
+}
+
+button:active,
+button:disabled {
+  @apply opacity-80;
+}
+
+button.primary:hover:not([disabled]) {
+  @apply outline-primary-dark;
+}
+
+button.secondary:hover:not([disabled]) {
+  @apply outline-secondary;
+}
+
+button.success:hover:not([disabled]) {
+  @apply outline-success;
+}
+
+button.danger:hover:not([disabled]) {
+  @apply outline-danger;
+}
+
+button.outline {
+  @apply bg-white border-2;
+}
+
+button.primary.outline {
+  @apply border-primary-dark text-primary-dark;
+}
+
+button.secondary.outline {
+  @apply border-secondary text-secondary;
+}
+
+button.success.outline {
+  @apply border-success text-success;
+}
+
+button.danger.outline {
+  @apply border-danger text-danger;
+}
+
+button.outline:hover:not([disabled]) {
+  @apply text-white outline-none;
+}

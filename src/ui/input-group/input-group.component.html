@@ -1,0 +1,24 @@
+<div class="flex flex-col gap-1 input-group">
+  <label [for]="id" class="input-group-label {{ variant }}">{{ label }}</label>
+  <div class="input-group-input {{ variant }}">
+    <div class="flex gap-2 items-center flex-grow">
+      <ng-content
+        select="[data-select=input-group-input-left-icon]"
+      ></ng-content>
+      <input
+        [type]="type"
+        [id]="id"
+        [name]="name"
+        [placeholder]="placeholder"
+        [disabled]="disabled"
+        (input)="onChange($event)"
+      />
+    </div>
+    <div>
+      <ng-content
+        select="[data-select=input-group-input-right-icon]"
+      ></ng-content>
+    </div>
+  </div>
+  <span class="input-group-hint {{ variant }} whitespace-pre">{{ hint }}</span>
+</div>

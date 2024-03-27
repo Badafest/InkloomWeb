@@ -1,0 +1,8 @@
+<button
+  [type]="type"
+  (click)="onClick($event)"
+  [ngClass]="variant + (outline ? ' ' + 'outline' : '')"
+  [disabled]="disabled"
+>
+  <ng-content select="[data-select=button-content]" />
+</button>

@@ -1,0 +1,73 @@
+.input-group {
+}
+
+.input-group-label {
+}
+
+.input-group-input {
+  @apply px-4 rounded-sm outline-none flex gap-2 items-center justify-between;
+}
+
+.input-group-input input {
+  @apply border-none py-2 outline-none flex-grow;
+}
+
+.input-group-input * {
+  @apply bg-transparent;
+}
+
+.input-group-hint {
+  @apply text-sm;
+}
+
+.input-group-label.primary,
+.input-group-hint.primary {
+  @apply text-primary-dark;
+}
+
+.input-group-label.secondary,
+.input-group-hint.secondary {
+  @apply text-secondary;
+}
+
+.input-group-label.success,
+.input-group-hint.success {
+  @apply text-success;
+}
+
+.input-group-label.danger,
+.input-group-hint.danger {
+  @apply text-danger;
+}
+
+.input-group-input.primary {
+  @apply bg-white text-primary-dark border border-primary-dark;
+}
+
+.input-group-input.primary:focus-within {
+  @apply outline-none bg-primary-dark/10;
+}
+
+.input-group-input.secondary {
+  @apply bg-white text-secondary border border-secondary;
+}
+
+.input-group-input.secondary:focus-within {
+  @apply outline-none bg-secondary/10;
+}
+
+.input-group-input.success {
+  @apply bg-white text-success border border-success;
+}
+
+.input-group-input.success:focus-within {
+  @apply outline-none bg-success/10;
+}
+
+.input-group-input.danger {
+  @apply bg-white text-danger border border-danger;
+}
+
+.input-group-input.danger:focus-within {
+  @apply outline-none bg-danger/10;
+}

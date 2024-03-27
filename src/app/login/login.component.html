@@ -1,0 +1,58 @@
+<main
+  class="bg-primary-light flex flex-col items-center justify-center w-full h-screen"
+>
+  <form class="flex flex-col gap-4 p-4 bg-white rounded-sm w-80 min-h-96">
+    <h5 class="pb-2 border-b border-b-primary-dark/50 text-center mb-4">
+      Login
+    </h5>
+    <app-input-group
+      id="email"
+      name="email"
+      label="Email"
+      placeholder="example@mail.com"
+      type="email"
+      hint="{{ emailHint }}"
+      [variant]="emailVariant"
+      [onChange]="handleEmailChange"
+    >
+      <fa-icon
+        class="{{ emailVariant }}"
+        data-select="input-group-input-left-icon"
+        [icon]="faMailIcon"
+      ></fa-icon>
+    </app-input-group>
+
+    <app-input-group
+      id="password"
+      name="password"
+      label="Password"
+      placeholder=""
+      hint="{{ passwordHint }}"
+      [type]="passwordType"
+      [variant]="passwordVariant"
+      [onChange]="handlePasswordChange"
+    >
+      <fa-icon
+        data-select="input-group-input-left-icon"
+        class="{{ passwordVariant }}"
+        [icon]="faLockIcon"
+      ></fa-icon>
+      <fa-icon
+        data-select="input-group-input-right-icon"
+        class="{{ passwordVariant }} cursor-pointer"
+        [icon]="faEyeIcon"
+        (click)="handleShowHidePassword()"
+      ></fa-icon>
+    </app-input-group>
+
+    <div class="border-t border-t-primary-dark/50 flex flex-col gap-4 py-2">
+      <div class="flex justify-between">
+        <a class="text-right w-max">Create Account</a>
+        <a class="text-right w-max">Forgot Password</a>
+      </div>
+      <app-button variant="primary" [outline]="false" [disabled]="false">
+        <span data-select="button-content">Login</span>
+      </app-button>
+    </div>
+  </form>
+</main>

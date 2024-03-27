@@ -2,3 +2,44 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+* {
+  @apply text-inherit bg-inherit;
+}
+
+*:disabled {
+  @apply !cursor-not-allowed;
+}
+
+a {
+  @apply text-primary-dark  underline underline-offset-4 cursor-pointer;
+}
+
+a:hover,
+a:focus {
+  @apply text-primary;
+}
+
+h6 {
+  @apply text-lg;
+}
+
+h5 {
+  @apply text-xl;
+}
+
+h4 {
+  @apply text-2xl font-semibold;
+}
+
+h3 {
+  @apply text-3xl font-semibold;
+}
+
+h2 {
+  @apply text-5xl font-semibold;
+}
+
+h1 {
+  @apply text-9xl font-bold;
+}

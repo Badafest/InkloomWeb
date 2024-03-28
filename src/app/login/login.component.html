@@ -2,9 +2,27 @@
   class="bg-primary-light flex flex-col items-center justify-center w-full h-screen"
 >
   <form class="flex flex-col gap-4 p-4 bg-white rounded-sm w-80 min-h-96">
-    <h5 class="pb-2 border-b border-b-primary-dark/50 text-center mb-4">
+    <h5 class="text-center">
       Login
     </h5>
+    <div class="flex pt-6 gap-2 justify-center border-t border-primary-dark/50 ">
+      <app-button classes="small pill icon outline">
+        <fa-icon [icon]="faGoogleIcon" data-select="button-content" />
+      </app-button>
+      <app-button classes="small pill icon outline">
+        <fa-icon [icon]="faFacebookIcon" data-select="button-content" />
+      </app-button>
+      <app-button classes="small pill icon outline">
+        <fa-icon [icon]="faMailIcon" data-select="button-content" />
+      </app-button>
+    </div>
+
+    <div class="flex justify-center gap-1 items-center">
+      <span class="border-b border-primary-dark/50 w-full"></span>
+      <span class="mb-1">OR</span>
+      <span class="border-b border-primary-dark/50 w-full"></span>
+    </div>
+
     <app-input-group
       id="email"
       name="email"
@@ -45,12 +63,12 @@
       ></fa-icon>
     </app-input-group>
 
-    <div class="border-t border-t-primary-dark/50 flex flex-col gap-4 py-2">
+    <div class=" flex flex-col gap-8">
       <div class="flex justify-between">
         <a class="text-right w-max">Create Account</a>
         <a class="text-right w-max">Forgot Password</a>
       </div>
-      <app-button variant="primary" [outline]="false" [disabled]="false">
+      <app-button>
         <span data-select="button-content">Login</span>
       </app-button>
     </div>

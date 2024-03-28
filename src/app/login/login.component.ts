@@ -9,6 +9,7 @@ import {
 } from '@fortawesome/free-solid-svg-icons';
 import { TVariant } from '../../ui/types';
 import { ButtonComponent } from '../../ui/button/button.component';
+import { faGoogle, faFacebookF } from '@fortawesome/free-brands-svg-icons';
 
 @Component({
   selector: 'app-login',
@@ -20,12 +21,14 @@ import { ButtonComponent } from '../../ui/button/button.component';
 export class LoginComponent {
   faMailIcon = faEnvelope;
   faLockIcon = faLock;
+  faEyeIcon = faEye;
+  faGoogleIcon = faGoogle;
+  faFacebookIcon = faFacebookF;
+
   passwordType = 'password';
 
   emailVariant: TVariant = 'primary';
   passwordVariant: TVariant = 'primary';
-
-  faEyeIcon = faEye;
 
   emailHint = '';
   passwordHint = '';
@@ -43,7 +46,12 @@ export class LoginComponent {
   }
 
   isPasswordValid(value: string) {
-    return /^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[a-zA-Z]).{8,}/.test(value);
+    return {
+      eightChars: value.length > 7,
+      oneUpperCase: /[A-Z]/.test(value),
+      oneLowerCase: /[a-z]/.test(value),
+      oneNumber: /[0-9]/.test(value),
+    };
   }
 
   handleEmailChange = (event: Event) => {
@@ -57,10 +65,17 @@ export class LoginComponent {
 
   handlePasswordChange = (event: Event) => {
     const value = (event.target as HTMLInputElement)?.value;
-    const isValid = !value || this.isPasswordValid(value);
+    const { eightChars, oneUpperCase, oneLowerCase, oneNumber } =
+      this.isPasswordValid(value);
+    const isValid =
+      !value || (eightChars && oneUpperCase && oneLowerCase && oneNumber);
     this.passwordVariant = value ? (isValid ? 'success' : 'danger') : 'primary';
-    this.passwordHint = isValid
-      ? ''
-      : 'Password must contain at least:\n - 8 characters \n - 1 uppercase letter\n - 1 lowercase letter \n - 1 number';
+    this.passwordHint = value
+      ? `Password must contain at least\n ${
+          eightChars ? '✓' : '✕ '
+        } 8 characters \n ${oneUpperCase ? '✓' : '✕ '} 1 uppercase letter\n ${
+          oneLowerCase ? '✓' : '✕ '
+        } 1 lowercase letter \n ${oneNumber ? '✓' : '✕ '} 1 number`
+      : '';
   };
 }

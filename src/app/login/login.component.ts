@@ -10,11 +10,27 @@ import {
 import { TVariant } from '../../ui/types';
 import { ButtonComponent } from '../../ui/button/button.component';
 import { faGoogle, faFacebookF } from '@fortawesome/free-brands-svg-icons';
+import {
+  AbstractControl,
+  FormBuilder,
+  FormControl,
+  FormGroup,
+  ReactiveFormsModule,
+  Validators,
+} from '@angular/forms';
+import { AuthService } from '../services/auth.service';
+import { HttpClientModule } from '@angular/common/http';
 
 @Component({
   selector: 'app-login',
   standalone: true,
-  imports: [InputGroupComponent, ButtonComponent, FontAwesomeModule],
+  imports: [
+    InputGroupComponent,
+    ButtonComponent,
+    FontAwesomeModule,
+    ReactiveFormsModule,
+    HttpClientModule,
+  ],
   templateUrl: './login.component.html',
   styleUrl: './login.component.css',
 })
@@ -30,19 +46,28 @@ export class LoginComponent {
   emailVariant: TVariant = 'primary';
   passwordVariant: TVariant = 'primary';
 
-  emailHint = '';
-  passwordHint = '';
+  loginForm: FormGroup;
+
+  constructor(
+    private formBuilder: FormBuilder,
+    private authService: AuthService
+  ) {
+    this.loginForm = this.formBuilder.group({
+      email: ['', this.emailValidator],
+      password: ['', this.passwordValidator],
+    });
+  }
+
+  onSubmit() {
+    const email = this.loginForm.get('email')?.getRawValue();
+    const password = this.loginForm.get('password')?.getRawValue();
+    this.authService.login(email, password);
+  }
 
   handleShowHidePassword() {
     this.passwordType =
       { password: 'text', text: 'password' }[this.passwordType] || 'password';
     this.faEyeIcon = this.passwordType === 'password' ? faEye : faEyeSlash;
-  }
-
-  isEmailValid(value: string) {
-    return /^[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*@(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?$/.test(
-      value
-    );
   }
 
   isPasswordValid(value: string) {
@@ -54,28 +79,40 @@ export class LoginComponent {
     };
   }
 
-  handleEmailChange = (event: Event) => {
-    const value = (event.target as HTMLInputElement)?.value;
-    const isValid = !value || this.isEmailValid(value);
+  emailValidator = (control: AbstractControl) => {
+    const value = control.value;
+    const isValid = value.length && !Validators.email(control)?.['email'];
     this.emailVariant = value ? (isValid ? 'success' : 'danger') : 'primary';
-    this.emailHint = isValid
-      ? ''
-      : 'Email address looks like "example@mail.com"';
+    if (isValid) {
+      return null;
+    }
+    return {
+      email: value
+        ? 'Email address looks like "example@mail.com"'
+        : 'Email address is required',
+    };
   };
 
-  handlePasswordChange = (event: Event) => {
-    const value = (event.target as HTMLInputElement)?.value;
+  passwordValidator = (control: AbstractControl) => {
+    const value = control.value;
     const { eightChars, oneUpperCase, oneLowerCase, oneNumber } =
       this.isPasswordValid(value);
     const isValid =
-      !value || (eightChars && oneUpperCase && oneLowerCase && oneNumber);
+      value && eightChars && oneUpperCase && oneLowerCase && oneNumber;
     this.passwordVariant = value ? (isValid ? 'success' : 'danger') : 'primary';
-    this.passwordHint = value
-      ? `Password must contain at least\n ${
-          eightChars ? '✓' : '✕ '
-        } 8 characters \n ${oneUpperCase ? '✓' : '✕ '} 1 uppercase letter\n ${
-          oneLowerCase ? '✓' : '✕ '
-        } 1 lowercase letter \n ${oneNumber ? '✓' : '✕ '} 1 number`
-      : '';
+
+    if (isValid) {
+      return null;
+    }
+
+    return {
+      password: value
+        ? `Password must contain at least\n ${
+            eightChars ? '✓' : '✕ '
+          } 8 characters \n ${oneUpperCase ? '✓' : '✕ '} 1 uppercase letter\n ${
+            oneLowerCase ? '✓' : '✕ '
+          } 1 lowercase letter \n ${oneNumber ? '✓' : '✕ '} 1 number`
+        : 'Password is required',
+    };
   };
 }

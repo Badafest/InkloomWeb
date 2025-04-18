@@ -5,7 +5,7 @@
 }
 
 .input-group-input {
-  @apply px-4 rounded-sm outline-none flex gap-2 items-center justify-between;
+  @apply px-4 rounded-sm outline-none outline-offset-0 flex gap-2 items-center justify-between;
 }
 
 .input-group-input input {
@@ -45,7 +45,7 @@
 }
 
 .input-group-input.primary:focus-within {
-  @apply outline-none bg-primary-dark/10;
+  @apply outline-primary-dark;
 }
 
 .input-group-input.secondary {
@@ -53,7 +53,7 @@
 }
 
 .input-group-input.secondary:focus-within {
-  @apply outline-none bg-secondary/10;
+  @apply outline-secondary;
 }
 
 .input-group-input.success {
@@ -61,7 +61,7 @@
 }
 
 .input-group-input.success:focus-within {
-  @apply outline-none bg-success/10;
+  @apply outline-success;
 }
 
 .input-group-input.danger {
@@ -69,5 +69,5 @@
 }
 
 .input-group-input.danger:focus-within {
-  @apply outline-none bg-danger/10;
+  @apply outline-danger;
 }

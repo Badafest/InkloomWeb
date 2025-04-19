@@ -5,6 +5,7 @@ import { LoginResponse } from '../models/login-response';
 import { Router } from '@angular/router';
 import { Observable } from 'rxjs';
 import { Injectable } from '@angular/core';
+import { NotificationService } from './notification.service';
 
 type TRequestOptions = {
   nonJsonContent?: boolean;
@@ -18,9 +19,11 @@ type TRequestOptions = {
 export abstract class ApiService {
   private _apiBaseUrl = environment.apiBaseUrl;
 
-  constructor(private http: HttpClient, private router: Router) {
-    console.log('API BASE URL', this._apiBaseUrl);
-  }
+  constructor(
+    private http: HttpClient,
+    protected router: Router,
+    protected notifications: NotificationService
+  ) {}
 
   protected async get<T>(endpoint: string, options: TRequestOptions) {
     return this.request<T>('get', endpoint, options);

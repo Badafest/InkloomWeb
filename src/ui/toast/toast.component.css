@@ -1,0 +1,15 @@
+.toast.primary {
+  @apply bg-primary-dark;
+}
+
+.toast.secondary {
+  @apply bg-secondary;
+}
+
+.toast.success {
+  @apply bg-success;
+}
+
+.toast.danger {
+  @apply bg-danger;
+}

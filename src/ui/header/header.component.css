@@ -1,0 +1,8 @@
+a {
+  @apply no-underline text-white;
+}
+
+a:hover,
+a:focus {
+  @apply text-secondary-light;
+}

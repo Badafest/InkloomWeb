@@ -1,10 +1,12 @@
 import { Component } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
+import { ToastComponent } from '../ui/toast/toast.component';
+import { HeaderComponent } from '../ui/header/header.component';
 
 @Component({
-  selector: 'app-root',
+  selector: 'app-layout',
   standalone: true,
-  imports: [RouterOutlet],
+  imports: [RouterOutlet, ToastComponent, HeaderComponent],
   templateUrl: './app.component.html',
   styleUrl: './app.component.css',
 })

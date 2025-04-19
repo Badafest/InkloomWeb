@@ -17,7 +17,7 @@ import { NG_VALUE_ACCESSOR, ControlValueAccessor } from '@angular/forms';
     },
   ],
   host: {
-    '(change)': '_onChange($event.target.value)',
+    '(input)': '_onChange($event.target.value)',
     '(blur)': '_onTouch()',
   },
 })

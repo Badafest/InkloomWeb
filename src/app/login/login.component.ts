@@ -6,6 +6,7 @@ import {
   faEye,
   faEyeSlash,
   faLock,
+  faSpinner,
 } from '@fortawesome/free-solid-svg-icons';
 import { TVariant } from '../../ui/types';
 import { ButtonComponent } from '../../ui/button/button.component';
@@ -13,7 +14,6 @@ import { faGoogle, faFacebookF } from '@fortawesome/free-brands-svg-icons';
 import {
   AbstractControl,
   FormBuilder,
-  FormControl,
   FormGroup,
   ReactiveFormsModule,
   Validators,
@@ -40,6 +40,7 @@ export class LoginComponent {
   faEyeIcon = faEye;
   faGoogleIcon = faGoogle;
   faFacebookIcon = faFacebookF;
+  faLoading = faSpinner;
 
   passwordType = 'password';
 
@@ -47,6 +48,7 @@ export class LoginComponent {
   passwordVariant: TVariant = 'primary';
 
   loginForm: FormGroup;
+  loginLoading: boolean = false;
 
   constructor(
     private formBuilder: FormBuilder,
@@ -58,10 +60,19 @@ export class LoginComponent {
     });
   }
 
-  onSubmit() {
+  async onSubmit() {
     const email = this.loginForm.get('email')?.getRawValue();
     const password = this.loginForm.get('password')?.getRawValue();
-    this.authService.login(email, password);
+    this.loginLoading = true;
+    const loginResponse = await this.authService.login(email, password);
+    loginResponse.subscribe({
+      complete: () => {
+        this.loginLoading = false;
+      },
+      error: () => {
+        this.loginLoading = false;
+      },
+    });
   }
 
   handleShowHidePassword() {

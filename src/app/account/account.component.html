@@ -1,0 +1,84 @@
+<div class="account-container">
+  @if(isEditing){
+  <form
+    class="flex flex-col gap-4 mt-4"
+    [formGroup]="accountForm"
+    (ngSubmit)="saveChanges()"
+  >
+    <app-input-group
+      type="url"
+      label="Change your avatar"
+      placeholder="Avatar"
+      name="avatar"
+      formControlName="avatar"
+    />
+    <app-input-group
+      type="textarea"
+      label="Write about yourself..."
+      placeholder="About"
+      name="about"
+      formControlName="about"
+      [hint]="aboutHint"
+      [variant]="aboutVariant"
+    />
+    <div class="flex gap-2">
+      <div class="w-1/2 flex flex-col">
+        <app-button (click)="toggleEdit()" variant="danger">
+          <span data-select="button-content">Cancel</span>
+        </app-button>
+      </div>
+      <div class="w-1/2 flex flex-col">
+        <app-button
+          type="submit"
+          variant="success"
+          [disabled]="
+            accountForm.invalid || accountForm.getError('about.maxLength')
+          "
+          ><span data-select="button-content">Save Changes</span>
+        </app-button>
+      </div>
+    </div>
+  </form>
+  }@else {
+  <div class="flex justify-between gap-4 items-start py-4 mb-2">
+    <div>
+      <div class="flex items-center gap-2">
+        @if(user()?.avatar){
+        <img [src]="user()?.avatar" alt="Avatar" class="avatar" />
+        }@else {
+        <app-avatar
+          [size]="60"
+          [username]="user()?.username ?? ''"
+        ></app-avatar>
+        }
+        <div class="flex flex-col items-start">
+          <span class="text-2xl"
+            >{{ user()?.username }}
+            <span class="text-base">
+              @if(!user()?.emailVerified){
+              <fa-icon [icon]="faWarning" class="text-danger"></fa-icon>
+              }@else{
+              <fa-icon [icon]="faVerified" class="text-success"></fa-icon>}
+            </span>
+          </span>
+          <p>
+            {{ user()?.email }}
+          </p>
+        </div>
+      </div>
+    </div>
+    <app-button variant="danger" [onClick]="logout">
+      <div class="flex items-center gap-2" data-select="button-content">
+        <fa-icon [icon]="faLogout"></fa-icon>
+        <span>Logout</span>
+      </div>
+    </app-button>
+  </div>
+  <p class="pb-2 mb-4 border-b border-b-primary-dark">
+    {{ user()?.about || "No bio available" }}
+  </p>
+  <app-button (click)="toggleEdit()" variant="primary">
+    <span data-select="button-content">Edit Profile</span>
+  </app-button>
+  }
+</div>

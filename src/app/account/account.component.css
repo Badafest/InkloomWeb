@@ -1,0 +1,15 @@
+.account-container {
+  @apply max-w-xl w-full m-auto bg-white p-4;
+}
+
+.avatar {
+  @apply w-24 h-24 rounded-full object-top object-cover;
+}
+
+.verified {
+  @apply text-success;
+}
+
+.not-verified {
+  @apply text-danger;
+}

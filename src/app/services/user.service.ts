@@ -1,0 +1,62 @@
+import { Injectable, Signal, signal } from '@angular/core';
+import { ApiService } from './api.service';
+import { User } from '../models/user';
+
+@Injectable({
+  providedIn: 'root',
+})
+export class UserService extends ApiService {
+  private _user = signal<User | null>(null);
+
+  public get user(): Signal<User | null> {
+    return this._user;
+  }
+
+  public isAuthenticated(): boolean {
+    const tokensValidity = this.checkAccessTokens();
+    return tokensValidity.accessToken || tokensValidity.refreshToken;
+  }
+
+  public async syncUser() {
+    const response = await this.get<User>('user');
+    response.subscribe({
+      next: ({ data }) => this._user.set(data),
+      error: (err) => {
+        this.notifications.addNotification(
+          'User Sync Failed',
+          err?.error?.message ?? err?.message ?? err,
+          'danger'
+        );
+      },
+    });
+    return response;
+  }
+
+  public async updateUser(updatedUser: Partial<User>) {
+    const response = await this.patch<User>('user', {
+      body: {
+        about: updatedUser.about,
+        avatar: updatedUser.avatar,
+      },
+    });
+    response.subscribe({
+      next: ({ data }) => this._user.set(data),
+      error: (err) => {
+        this.notifications.addNotification(
+          'User Update Failed',
+          err?.error?.message ?? err?.message ?? err,
+          'danger'
+        );
+      },
+    });
+    return response;
+  }
+
+  public logout() {
+    this._user.set(null);
+    Object.keys(localStorage)
+      .filter((key) => /^auth\:/.test(key))
+      .forEach((key) => localStorage.removeItem(key));
+    this.router.navigateByUrl('/');
+  }
+}

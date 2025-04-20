@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, effect, signal } from '@angular/core';
 import { InputGroupComponent } from '../../ui/input-group/input-group.component';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 import {
@@ -20,6 +20,8 @@ import {
 } from '@angular/forms';
 import { AuthService } from '../services/auth.service';
 import { HttpClientModule } from '@angular/common/http';
+import { UserService } from '../services/user.service';
+import { ActivatedRoute, Router } from '@angular/router';
 
 @Component({
   selector: 'app-login',
@@ -50,21 +52,43 @@ export class LoginComponent {
   loginForm: FormGroup;
   loginLoading: boolean = false;
 
+  queryParams = signal<Record<string, string>>({});
+
   constructor(
     private formBuilder: FormBuilder,
-    private authService: AuthService
+    private authService: AuthService,
+    private userService: UserService,
+    private router: Router,
+    private route: ActivatedRoute
   ) {
     this.loginForm = this.formBuilder.group({
       email: ['', this.emailValidator],
       password: ['', this.passwordValidator],
     });
+    effect(
+      () => {
+        this.route.queryParams.subscribe((params) =>
+          this.queryParams.set(params)
+        );
+        const user = this.userService.user();
+        if (user !== null) {
+          this.router.navigateByUrl('/account');
+        }
+      },
+      { allowSignalWrites: true }
+    );
   }
 
   async onSubmit() {
     const email = this.loginForm.get('email')?.getRawValue();
     const password = this.loginForm.get('password')?.getRawValue();
     this.loginLoading = true;
-    const loginResponse = await this.authService.login(email, password);
+
+    const loginResponse = await this.authService.login(
+      email,
+      password,
+      this.queryParams()['redirectTo'] ?? '/dashboard'
+    );
     loginResponse.subscribe({
       complete: () => {
         this.loginLoading = false;
@@ -79,15 +103,6 @@ export class LoginComponent {
     this.passwordType =
       { password: 'text', text: 'password' }[this.passwordType] || 'password';
     this.faEyeIcon = this.passwordType === 'password' ? faEye : faEyeSlash;
-  }
-
-  isPasswordValid(value: string) {
-    return {
-      eightChars: value.length > 7,
-      oneUpperCase: /[A-Z]/.test(value),
-      oneLowerCase: /[a-z]/.test(value),
-      oneNumber: /[0-9]/.test(value),
-    };
   }
 
   emailValidator = (control: AbstractControl) => {
@@ -106,8 +121,12 @@ export class LoginComponent {
 
   passwordValidator = (control: AbstractControl) => {
     const value = control.value;
-    const { eightChars, oneUpperCase, oneLowerCase, oneNumber } =
-      this.isPasswordValid(value);
+    const { eightChars, oneUpperCase, oneLowerCase, oneNumber } = {
+      eightChars: value.length > 7,
+      oneUpperCase: /[A-Z]/.test(value),
+      oneLowerCase: /[a-z]/.test(value),
+      oneNumber: /[0-9]/.test(value),
+    };
     const isValid =
       value && eightChars && oneUpperCase && oneLowerCase && oneNumber;
     this.passwordVariant = value ? (isValid ? 'success' : 'danger') : 'primary';

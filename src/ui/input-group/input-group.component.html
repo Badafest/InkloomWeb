@@ -5,6 +5,17 @@
       <ng-content
         select="[data-select=input-group-input-left-icon]"
       ></ng-content>
+      @switch (type) { @case ('textarea') {
+      <textarea
+        [id]="id"
+        [name]="name"
+        [placeholder]="placeholder"
+        [disabled]="disabled"
+        [value]="value"
+        (input)="onChange($event)"
+        >{{ value }}</textarea
+      >
+      } @default {
       <input
         [type]="type"
         [id]="id"
@@ -14,6 +25,7 @@
         [value]="value"
         (input)="onChange($event)"
       />
+      } }
     </div>
     <div>
       <ng-content

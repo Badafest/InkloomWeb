@@ -12,7 +12,7 @@ type TRequestOptions = {
   skipAuthorization?: boolean;
   skipJoinUrl?: boolean;
   asPromise?: boolean;
-  body: { [k: string]: any };
+  body?: { [k: string]: any };
 };
 
 @Injectable()
@@ -25,23 +25,23 @@ export abstract class ApiService {
     protected notifications: NotificationService
   ) {}
 
-  protected async get<T>(endpoint: string, options: TRequestOptions) {
+  protected async get<T>(endpoint: string, options: TRequestOptions = {}) {
     return this.request<T>('get', endpoint, options);
   }
 
-  protected async post<T>(endpoint: string, options: TRequestOptions) {
+  protected async post<T>(endpoint: string, options: TRequestOptions = {}) {
     return this.request<T>('post', endpoint, options);
   }
 
-  protected async put<T>(endpoint: string, options: TRequestOptions) {
+  protected async put<T>(endpoint: string, options: TRequestOptions = {}) {
     return this.request<T>('put', endpoint, options);
   }
 
-  protected async patch<T>(endpoint: string, options: TRequestOptions) {
+  protected async patch<T>(endpoint: string, options: TRequestOptions = {}) {
     return this.request<T>('patch', endpoint, options);
   }
 
-  protected async delete<T>(endpoint: string, options: TRequestOptions) {
+  protected async delete<T>(endpoint: string, options: TRequestOptions = {}) {
     return this.request<T>('delete', endpoint, options);
   }
 
@@ -76,11 +76,11 @@ export abstract class ApiService {
           .replaceAll(/(\/\/)/g, '/')
           .replace(':/', '://');
 
-    const headers: HttpHeaders = new HttpHeaders();
+    let headers = new HttpHeaders();
 
     // content type headers
     if (!options.nonJsonContent) {
-      headers.append('Content-Type', 'application/json;charset=utf-8');
+      headers = headers.set('Content-Type', 'application/json;charset=utf-8');
     }
 
     // authorization headers (bearer token)
@@ -91,9 +91,9 @@ export abstract class ApiService {
           "Couldn't fetch authorization tokens. Aborting the request"
         );
       }
-      headers.append(
+      headers = headers.set(
         'Authorization',
-        `Bearer ${authTokens?.accessToken.value}`
+        `Bearer ${authTokens.accessToken.value}`
       );
     }
 
@@ -107,39 +107,49 @@ export abstract class ApiService {
     return this.http.request<{ data: T }>(method, fullUrl, requestOptions);
   }
 
-  private async getAuthTokens(): Promise<LoginResponse | null> {
-    const storedTokens = {
-      username: localStorage.getItem('auth:username') ?? '',
+  checkAccessTokens() {
+    const storedTokens = this.getStoredTokens();
+    return {
+      // check if the access token is valid for next 60 seconds
+      accessToken:
+        new Date(storedTokens.accessToken.expiry).valueOf() >
+        Date.now() + 60000,
+      // check if we can use refresh token to get new tokens
+      // keep a buffer of 10 seconds for refreshing tokens
+      refreshToken:
+        new Date(storedTokens.refreshToken.expiry).valueOf() >
+        Date.now() + 10000,
+    };
+  }
+
+  private getStoredTokens(): LoginResponse {
+    return {
+      username: localStorage?.getItem('auth:username') ?? '',
       accessToken: {
-        value: localStorage.getItem('auth:accessToken:value') ?? '',
+        value: localStorage?.getItem('auth:accessToken:value') ?? '',
         expiry:
-          localStorage.getItem('auth:accessToken:expiry') ??
+          localStorage?.getItem('auth:accessToken:expiry') ??
           new Date().toISOString(),
       },
       refreshToken: {
-        value: localStorage.getItem('auth:refreshToken:value') ?? '',
+        value: localStorage?.getItem('auth:refreshToken:value') ?? '',
         expiry:
-          localStorage.getItem('auth:refreshToken:expiry') ??
+          localStorage?.getItem('auth:refreshToken:expiry') ??
           new Date().toISOString(),
       },
     };
+  }
 
-    // check if the access token is valid for next 60 seconds
-    const accessTokenExpired =
-      new Date(storedTokens.accessToken.expiry).valueOf() <= Date.now() - 60000;
+  private async getAuthTokens(): Promise<LoginResponse | null> {
+    const storedTokens = this.getStoredTokens();
+    const tokenValidity = this.checkAccessTokens();
 
-    if (!accessTokenExpired) {
+    if (tokenValidity.accessToken) {
       return storedTokens;
     }
 
     try {
-      // check if we can use refresh token to get new tokens
-      // keep a buffer of 10 seconds for refreshing tokens
-      const canRefreshTokens =
-        new Date(storedTokens.refreshToken.expiry).valueOf() >
-        Date.now() + 10000;
-
-      if (!canRefreshTokens) {
+      if (!tokenValidity.refreshToken) {
         throw new Error('Refresh Token Expired');
       }
 
@@ -165,7 +175,10 @@ export abstract class ApiService {
       return refreshedTokens;
     } catch (error) {
       console.error('ERROR WHILE REFRESHING TOKENS - ', error);
-      await this.router.navigate(['/login']);
+      const currentPath = window.location.pathname;
+      if (currentPath !== '/login') {
+        await this.router.navigateByUrl(`/login?redirectTo=${currentPath}`);
+      }
       return null;
     }
   }

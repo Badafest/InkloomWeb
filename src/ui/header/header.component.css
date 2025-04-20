@@ -2,7 +2,6 @@ a {
   @apply no-underline text-white;
 }
 
-a:hover,
-a:focus {
-  @apply text-secondary-light;
+a.active {
+  @apply border-b-2 border-spacing-6;
 }

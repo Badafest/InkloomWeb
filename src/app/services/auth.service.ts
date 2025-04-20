@@ -1,11 +1,13 @@
 import { LoginResponse } from '../models/login-response';
 import { ApiService } from './api.service';
-import { Injectable } from '@angular/core';
+import { inject, Injectable } from '@angular/core';
+import { UserService } from './user.service';
 
 @Injectable({
   providedIn: 'root', // Service is registered in root module and available app-wide
 })
 export class AuthService extends ApiService {
+  private _userService = inject(UserService);
   private _notificationIds: string[] = [];
   public async login(
     email: string,
@@ -23,7 +25,12 @@ export class AuthService extends ApiService {
         this._notificationIds.forEach((id) =>
           this.notifications.removeNotification(id)
         );
-        this.router.navigateByUrl(redirectTo);
+        this._userService
+          .syncUser()
+          .then(() => this.router.navigateByUrl(redirectTo))
+          .catch((err) => {
+            throw err;
+          });
       },
       error: (error) => {
         const message =

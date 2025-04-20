@@ -1,4 +1,5 @@
 .input-group {
+  @apply text-left;
 }
 
 .input-group-label {
@@ -8,8 +9,9 @@
   @apply px-4 rounded-sm outline-none outline-offset-0 flex gap-2 items-center justify-between;
 }
 
-.input-group-input input {
-  @apply border-none py-2 outline-none flex-grow;
+.input-group-input input,
+.input-group-input textarea {
+  @apply border-none py-2 outline-none flex-grow max-h-60 min-h-10;
 }
 
 .input-group-input * {

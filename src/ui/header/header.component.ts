@@ -1,4 +1,4 @@
-import { Component, signal } from '@angular/core';
+import { Component, computed, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterLink, RouterLinkActive } from '@angular/router';
 import { FormsModule } from '@angular/forms';
@@ -15,29 +15,31 @@ export class HeaderComponent {
   constructor(protected userService: UserService) {}
   mobileMenuOpen = false;
 
-  routes = signal([
+  routes = computed(() => [
     {
       href: '/',
       label: 'Home',
       exact: true,
-      alwaysVisible: true,
     },
-    {
-      href: '/dashboard',
-      label: 'Dashboard',
-      exact: true,
-      guarded: true,
-    },
-    {
-      href: '/account',
-      label: 'Account',
-      exact: true,
-      guarded: true,
-    },
-    {
-      href: '/login',
-      label: 'Login',
-      exact: true,
-    },
+    ...(this.userService.user() === null
+      ? [
+          {
+            href: '/login',
+            label: 'Login',
+            exact: true,
+          },
+        ]
+      : [
+          {
+            href: '/dashboard',
+            label: 'Dashboard',
+            exact: true,
+          },
+          {
+            href: '/account',
+            label: 'Account',
+            exact: true,
+          },
+        ]),
   ]);
 }

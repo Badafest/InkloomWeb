@@ -40,17 +40,14 @@
     </div>
   </form>
   }@else {
-  <div class="flex justify-between gap-4 items-start py-4 mb-2">
+  <div class="flex flex-wrap justify-between gap-4 items-start py-4 mb-2">
     <div>
       <div class="flex items-center gap-2">
-        @if(user()?.avatar){
-        <img [src]="user()?.avatar" alt="Avatar" class="avatar" />
-        }@else {
         <app-avatar
           [size]="60"
           [username]="user()?.username ?? ''"
+          [image]="user()?.avatar"
         ></app-avatar>
-        }
         <div class="flex flex-col items-start">
           <span class="text-2xl"
             >{{ user()?.username }}

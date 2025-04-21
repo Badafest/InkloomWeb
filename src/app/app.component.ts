@@ -4,11 +4,12 @@ import { ToastComponent } from '../ui/toast/toast.component';
 import { HeaderComponent } from '../ui/header/header.component';
 import { UserService } from './services/user.service';
 import { isPlatformBrowser } from '@angular/common';
+import { FooterComponent } from '../ui/footer/footer.component';
 
 @Component({
   selector: 'app-layout',
   standalone: true,
-  imports: [RouterOutlet, ToastComponent, HeaderComponent],
+  imports: [RouterOutlet, ToastComponent, HeaderComponent, FooterComponent],
   templateUrl: './app.component.html',
   styleUrl: './app.component.css',
 })

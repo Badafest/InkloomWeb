@@ -1,1 +1,105 @@
-<p>register works!</p>
+<form
+  class="flex flex-col gap-4 container bg-white p-4 w-80 min-h-96 mx-auto"
+  [formGroup]="registerForm"
+  (ngSubmit)="onSubmit()"
+>
+  <h5 class="text-center">Join Inkloom</h5>
+  <div
+    class="flex flex-col pt-6 gap-2 justify-center border-t border-primary-dark/50"
+  >
+    @for(registerOption of ssoRegisterOptions; track registerOption.type){
+    <app-button classes="pill outline" [onClick]="registerOption.action">
+      <p
+        data-select="button-content"
+        class="flex gap-12 justify-start items-center w-full"
+      >
+        <fa-icon [icon]="registerOption.icon" data-select="button-content" />
+        <span>{{ registerOption.label }}</span>
+      </p>
+    </app-button>
+    }
+  </div>
+
+  <div class="flex justify-center gap-1 items-center">
+    <span class="border-b border-primary-dark/50 w-full"></span>
+    <span class="mb-1">OR</span>
+    <span class="border-b border-primary-dark/50 w-full"></span>
+  </div>
+
+  <app-input-group
+    id="username"
+    name="username"
+    label="Username"
+    placeholder="example"
+    hint="{{ registerForm.get('username')?.errors?.['username'] }}"
+    [variant]="usernameVariant"
+    formControlName="username"
+  >
+    <fa-icon
+      class="{{ usernameVariant }}"
+      data-select="input-group-input-left-icon"
+      [icon]="faUserIcon"
+    ></fa-icon>
+  </app-input-group>
+
+  <app-input-group
+    id="email"
+    name="email"
+    label="Email"
+    placeholder="example@mail.com"
+    type="email"
+    hint="{{ registerForm.get('email')?.errors?.['email'] }}"
+    [variant]="emailVariant"
+    formControlName="email"
+  >
+    <fa-icon
+      class="{{ emailVariant }}"
+      data-select="input-group-input-left-icon"
+      [icon]="faMailIcon"
+    ></fa-icon>
+  </app-input-group>
+
+  <app-input-group
+    id="password"
+    name="password"
+    label="Password"
+    placeholder=""
+    hint="{{ registerForm.get('password')?.errors?.['password'] }}"
+    [type]="passwordType"
+    [variant]="passwordVariant"
+    formControlName="password"
+  >
+    <fa-icon
+      data-select="input-group-input-left-icon"
+      class="{{ passwordVariant }}"
+      [icon]="faLockIcon"
+    ></fa-icon>
+    <fa-icon
+      data-select="input-group-input-right-icon"
+      class="{{ passwordVariant }} cursor-pointer"
+      [icon]="faEyeIcon"
+      (click)="handleShowHidePassword()"
+    ></fa-icon>
+  </app-input-group>
+
+  <app-button
+    type="submit"
+    [disabled]="registerForm.invalid || registerLoading"
+  >
+    <div data-select="button-content" class="flex gap-2">
+      @if(registerLoading){
+      <fa-icon [icon]="faLoading" [classes]="['animate-spin']"></fa-icon>
+      }
+      <span data-select="button-content">Register with Email</span>
+    </div>
+  </app-button>
+
+  <div
+    class="flex justify-between gap-2 border-t border-t-primary-dark/50 mt-3 pt-4"
+  >
+    <p>
+      Already have an account?
+      <a class="text-right w-max" href="/login">Login instead</a>
+    </p>
+  </div>
+</form>

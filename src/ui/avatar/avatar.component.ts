@@ -10,6 +10,7 @@ import { Component, Input } from '@angular/core';
 export class AvatarComponent {
   @Input() size: number = 120;
   @Input() username: string = 'Anonymous';
+  @Input() image: string | undefined;
 
   backgroundColor = [
     '#8B0000', // Dark Red

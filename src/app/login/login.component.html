@@ -1,19 +1,23 @@
 <form
   class="flex flex-col gap-4 container bg-white p-4 w-80 min-h-96 mx-auto"
   [formGroup]="loginForm"
-  (ngSubmit)="onSubmit()"
+  (ngSubmit)="onLoginFormSubmit()"
 >
-  <h5 class="text-center">Login</h5>
-  <div class="flex pt-6 gap-2 justify-center border-t border-primary-dark/50">
-    <app-button classes="small pill icon outline">
-      <fa-icon [icon]="faGoogleIcon" data-select="button-content" />
+  <h5 class="text-center">Welcome Back!</h5>
+  <div
+    class="flex flex-col pt-6 gap-2 justify-center border-t border-primary-dark/50"
+  >
+    @for(loginOption of ssoLoginOptions; track loginOption.type){
+    <app-button classes="pill outline" [onClick]="loginOption.action">
+      <p
+        data-select="button-content"
+        class="flex gap-12 justify-start items-center w-full"
+      >
+        <fa-icon [icon]="loginOption.icon" data-select="button-content" />
+        <span>{{ loginOption.label }}</span>
+      </p>
     </app-button>
-    <app-button classes="small pill icon outline">
-      <fa-icon [icon]="faFacebookIcon" data-select="button-content" />
-    </app-button>
-    <app-button classes="small pill icon outline">
-      <fa-icon [icon]="faMailIcon" data-select="button-content" />
-    </app-button>
+    }
   </div>
 
   <div class="flex justify-center gap-1 items-center">
@@ -62,18 +66,84 @@
     ></fa-icon>
   </app-input-group>
 
-  <div class="flex flex-col gap-8">
-    <div class="flex justify-between">
-      <a class="text-right w-max">Create Account</a>
-      <a class="text-right w-max">Forgot Password</a>
+  <app-button type="submit" [disabled]="loginForm.invalid || loginLoading">
+    <div data-select="button-content" class="flex gap-2">
+      @if(loginLoading){
+      <fa-icon [icon]="faLoading" [classes]="['animate-spin']"></fa-icon>
+      }
+      <span data-select="button-content">Sign in with Password</span>
     </div>
-    <app-button type="submit" [disabled]="loginForm.invalid || loginLoading">
-      <div data-select="button-content" class="flex gap-2">
-        @if(loginLoading){
-        <fa-icon [icon]="faLoading" [classes]="['animate-spin']"></fa-icon>
-        }
-        <span data-select="button-content">Login</span>
-      </div>
-    </app-button>
+  </app-button>
+
+  <div
+    class="flex justify-between gap-2 border-t border-t-primary-dark/50 mt-3 pt-4"
+  >
+    <a class="text-right w-max" href="/register">Create Account</a>
+    <a class="text-right w-max" href="/reset-password">Forgot Password</a>
   </div>
 </form>
+
+<!-- Magic Login Dialog -->
+<dialog #magicLoginDialog class="backdrop:bg-white/75">
+  <div class="bg-white p-4 shadow-md border border-primary-dark w-96">
+    <form
+      [formGroup]="magicLoginForm"
+      (ngSubmit)="onMagicLoginFormSubmit()"
+      class="flex flex-col gap-2"
+    >
+      <p class="mb-3">
+        If you have verified your email address, we'll send a magic link to your
+        inbox.
+      </p>
+      <app-input-group
+        id="magic-login-email"
+        name="email"
+        label="Your Email"
+        placeholder="example@mail.com"
+        type="email"
+        hint="{{ magicLoginForm.get('email')?.errors?.['email'] }}"
+        [variant]="emailVariant"
+        formControlName="email"
+      >
+        <fa-icon
+          class="{{ emailVariant }}"
+          data-select="input-group-input-left-icon"
+          [icon]="faMailIcon"
+        ></fa-icon>
+      </app-input-group>
+      <div class="mt-4 flex gap-2 justify-between">
+        <div class="w-full flex flex-col">
+          <app-button
+            variant="danger"
+            [onClick]="closeMagicLoginDialog"
+            type="button"
+            [disabled]="loginLoading"
+          >
+            <span data-select="button-content">Cancel</span>
+          </app-button>
+        </div>
+        <div class="w-full flex flex-col">
+          <app-button
+            type="submit"
+            [disabled]="magicLoginForm.invalid || loginLoading"
+          >
+            <div
+              class="flex gap-4 w-max items-center"
+              data-select="button-content"
+            >
+              <span>Continue</span>
+              @if(loginLoading){
+              <fa-icon
+                [icon]="faLoading"
+                [classes]="['animate-spin']"
+              ></fa-icon>
+              }@else {
+              <fa-icon [icon]="faNextIcon"></fa-icon>
+              }
+            </div>
+          </app-button>
+        </div>
+      </div>
+    </form>
+  </div>
+</dialog>

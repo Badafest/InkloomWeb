@@ -1,12 +1,12 @@
-<header class="sticky top-0 z-20 w-full bg-primary-dark text-white">
-  <div class="container mx-auto flex h-16 items-center justify-between px-4">
+<header class="w-full">
+  <div
+    class="container mx-auto flex h-16 items-center justify-between border-b border-b-primary-dark"
+  >
     <a routerLink="/" class="text-2xl">Inkloom</a>
 
     <div class="flex items-center gap-4">
       <nav class="hidden md:flex gap-6">
         @for (route of routes(); track route.href) {
-        @if((userService.user()!==null && route.guarded) ||
-        (userService.user()===null && !route.guarded) || route.alwaysVisible){
         <a
           [routerLink]="route.href"
           routerLinkActive="active"
@@ -14,12 +14,31 @@
         >
           {{ route.label }}
         </a>
-        } }
+        }
       </nav>
+
       <button
         (click)="mobileMenuOpen = !mobileMenuOpen"
         class="md:hidden inline-flex items-center justify-center rounded-md text-sm font-medium h-10 w-10"
       >
+        @if(mobileMenuOpen){
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          width="24"
+          height="24"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="2"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+          class="h-6 w-6"
+        >
+          <path d="M18 6 6 18"></path>
+          <path d="m6 6 12 12"></path>
+        </svg>
+        <span class="sr-only">Close menu</span>
+        } @else{
         <svg
           xmlns="http://www.w3.org/2000/svg"
           width="24"
@@ -37,34 +56,15 @@
           <line x1="4" x2="20" y1="18" y2="18"></line>
         </svg>
         <span class="sr-only">Toggle menu</span>
+        }
       </button>
     </div>
   </div>
 
   @if (mobileMenuOpen) {
   <div
-    class="fixed inset-y-0 right-0 z-50 w-3/4 max-w-sm p-4 shadow-lg bg-primary-dark"
+    class="fixed inset-y-12 right-0 z-50 w-3/4 h-screen max-w-sm p-4 shadow-lg bg-white"
   >
-    <div class="flex justify-end">
-      <button (click)="mobileMenuOpen = false" class="rounded-md p-1">
-        <svg
-          xmlns="http://www.w3.org/2000/svg"
-          width="24"
-          height="24"
-          viewBox="0 0 24 24"
-          fill="none"
-          stroke="currentColor"
-          stroke-width="2"
-          stroke-linecap="round"
-          stroke-linejoin="round"
-          class="h-6 w-6"
-        >
-          <path d="M18 6 6 18"></path>
-          <path d="m6 6 12 12"></path>
-        </svg>
-        <span class="sr-only">Close menu</span>
-      </button>
-    </div>
     <nav class="flex flex-col gap-4 mt-8 px-6">
       @for (route of routes(); track route.href) {
       <a

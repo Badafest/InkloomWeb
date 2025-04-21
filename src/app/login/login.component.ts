@@ -1,7 +1,17 @@
-import { Component, effect, signal } from '@angular/core';
+import {
+  Component,
+  effect,
+  ElementRef,
+  inject,
+  PLATFORM_ID,
+  signal,
+  ViewChild,
+} from '@angular/core';
 import { InputGroupComponent } from '../../ui/input-group/input-group.component';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 import {
+  faArrowRight,
+  faClose,
   faEnvelope,
   faEye,
   faEyeSlash,
@@ -22,6 +32,7 @@ import { AuthService } from '../services/auth.service';
 import { HttpClientModule } from '@angular/common/http';
 import { UserService } from '../services/user.service';
 import { ActivatedRoute, Router } from '@angular/router';
+import { isPlatformBrowser } from '@angular/common';
 
 @Component({
   selector: 'app-login',
@@ -40,9 +51,41 @@ export class LoginComponent {
   faMailIcon = faEnvelope;
   faLockIcon = faLock;
   faEyeIcon = faEye;
-  faGoogleIcon = faGoogle;
-  faFacebookIcon = faFacebookF;
   faLoading = faSpinner;
+  faCloseIcon = faClose;
+  faNextIcon = faArrowRight;
+
+  @ViewChild('magicLoginDialog')
+  magicLoginDialog!: ElementRef<HTMLDialogElement>;
+
+  closeMagicLoginDialog = () => {
+    this.magicLoginDialog.nativeElement.close();
+  };
+
+  openMagicLoginDialog = () => {
+    this.magicLoginDialog.nativeElement.showModal();
+  };
+
+  ssoLoginOptions = [
+    {
+      type: 'google',
+      icon: faGoogle,
+      label: 'Sign in with Google',
+      action: () => {},
+    },
+    {
+      type: 'facebook',
+      icon: faFacebookF,
+      label: 'Sign in with Facebook',
+      action: () => {},
+    },
+    {
+      type: 'mail',
+      icon: faEnvelope,
+      label: 'Sign in with Email',
+      action: () => this.openMagicLoginDialog(),
+    },
+  ];
 
   passwordType = 'password';
 
@@ -52,7 +95,11 @@ export class LoginComponent {
   loginForm: FormGroup;
   loginLoading: boolean = false;
 
+  magicLoginForm: FormGroup;
+
   queryParams = signal<Record<string, string>>({});
+
+  _platformId = inject(PLATFORM_ID);
 
   constructor(
     private formBuilder: FormBuilder,
@@ -65,6 +112,10 @@ export class LoginComponent {
       email: ['', this.emailValidator],
       password: ['', this.passwordValidator],
     });
+
+    this.magicLoginForm = this.formBuilder.group({
+      email: ['', this.emailValidator],
+    });
     effect(
       () => {
         this.route.queryParams.subscribe((params) =>
@@ -74,12 +125,18 @@ export class LoginComponent {
         if (user !== null) {
           this.router.navigateByUrl('/account');
         }
+        if (isPlatformBrowser(this._platformId)) {
+          const type = this.queryParams()['type'];
+          if (type === 'email') {
+            this.openMagicLoginDialog();
+          }
+        }
       },
       { allowSignalWrites: true }
     );
   }
 
-  async onSubmit() {
+  async onLoginFormSubmit() {
     const email = this.loginForm.get('email')?.getRawValue();
     const password = this.loginForm.get('password')?.getRawValue();
     this.loginLoading = true;
@@ -90,6 +147,29 @@ export class LoginComponent {
       this.queryParams()['redirectTo'] ?? '/dashboard'
     );
     loginResponse.subscribe({
+      complete: () => {
+        this.loginLoading = false;
+      },
+      error: () => {
+        this.loginLoading = false;
+      },
+    });
+  }
+
+  async onMagicLoginFormSubmit() {
+    const email = this.magicLoginForm.get('email')?.getRawValue();
+    this.loginLoading = true;
+
+    const loginResponse = await this.authService.magicLogin(
+      email,
+      null,
+      this.queryParams()['redirectTo'] ?? '/dashboard'
+    );
+    loginResponse.subscribe({
+      next: () => {
+        this.closeMagicLoginDialog();
+        this.router.navigateByUrl('/');
+      },
       complete: () => {
         this.loginLoading = false;
       },

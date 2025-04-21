@@ -17,6 +17,26 @@ export class UserService extends ApiService {
     return tokensValidity.accessToken || tokensValidity.refreshToken;
   }
 
+  public async checkUsername(username: string) {
+    const response = await this.get<boolean>(
+      `user/check-username?username=${username}`,
+      {
+        skipAuthorization: true,
+      }
+    );
+    response.subscribe({
+      error: (err) => {
+        this.notifications.addNotification(
+          'Username Check Failed',
+          err?.error?.message ?? err?.message ?? err,
+          'danger',
+          5000
+        );
+      },
+    });
+    return response;
+  }
+
   public async syncUser() {
     const response = await this.get<User>('user');
     response.subscribe({
@@ -45,7 +65,8 @@ export class UserService extends ApiService {
         this.notifications.addNotification(
           'User Update Failed',
           err?.error?.message ?? err?.message ?? err,
-          'danger'
+          'danger',
+          5000
         );
       },
     });

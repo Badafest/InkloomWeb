@@ -3,7 +3,7 @@ import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { environment } from '../../environments/environment';
 import { LoginResponse } from '../models/login-response';
 import { Router } from '@angular/router';
-import { Observable } from 'rxjs';
+import { Observable, shareReplay } from 'rxjs';
 import { Injectable } from '@angular/core';
 import { NotificationService } from './notification.service';
 
@@ -104,7 +104,9 @@ export abstract class ApiService {
       requestOptions['body'] = options.body;
     }
 
-    return this.http.request<{ data: T }>(method, fullUrl, requestOptions);
+    return this.http
+      .request<{ data: T }>(method, fullUrl, requestOptions)
+      .pipe(shareReplay());
   }
 
   checkAccessTokens() {
@@ -124,17 +126,17 @@ export abstract class ApiService {
 
   private getStoredTokens(): LoginResponse {
     return {
-      username: localStorage?.getItem('auth:username') ?? '',
+      username: localStorage.getItem('auth:username') ?? '',
       accessToken: {
-        value: localStorage?.getItem('auth:accessToken:value') ?? '',
+        value: localStorage.getItem('auth:accessToken:value') ?? '',
         expiry:
-          localStorage?.getItem('auth:accessToken:expiry') ??
+          localStorage.getItem('auth:accessToken:expiry') ??
           new Date().toISOString(),
       },
       refreshToken: {
-        value: localStorage?.getItem('auth:refreshToken:value') ?? '',
+        value: localStorage.getItem('auth:refreshToken:value') ?? '',
         expiry:
-          localStorage?.getItem('auth:refreshToken:expiry') ??
+          localStorage.getItem('auth:refreshToken:expiry') ??
           new Date().toISOString(),
       },
     };

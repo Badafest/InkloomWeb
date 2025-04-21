@@ -1,7 +1,7 @@
 a {
-  @apply no-underline text-white;
+  @apply no-underline text-primary-dark w-max;
 }
 
 a.active {
-  @apply border-b-2 border-spacing-6;
+  @apply border-b-2 border-b-primary-dark border-spacing-6;
 }

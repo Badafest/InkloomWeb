@@ -1,1 +1,8 @@
-<p>magic-login works!</p>
+<p class="text-lg flex gap-4 items-center">
+  @if(verifying){
+  <fa-icon [icon]="faLoading" [classes]="['animate-spin']"></fa-icon>
+  }
+  <span>{{ statusMessage }}</span>
+</p>
+
+<a href="/login?type=email">Generate New Link</a>

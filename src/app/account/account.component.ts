@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, effect } from '@angular/core';
 import { UserService } from '../services/user.service';
 import { User } from '../models/user';
 import { InputGroupComponent } from '../../ui/input-group/input-group.component';
@@ -35,7 +35,7 @@ export class AccountComponent {
   user = this.userService.user; // Signal for reactivity
   isEditing = false;
 
-  accountForm: FormGroup;
+  accountForm: FormGroup = new FormGroup([]);
 
   aboutHint = '';
   aboutVariant: TVariant = 'primary';
@@ -44,9 +44,11 @@ export class AccountComponent {
     private userService: UserService,
     private formBuilder: FormBuilder
   ) {
-    this.accountForm = this.formBuilder.group({
-      avatar: [this.user()?.avatar],
-      about: [this.user()?.about, this.aboutValidator],
+    effect(() => {
+      this.accountForm = this.formBuilder.group({
+        avatar: [this.user()?.avatar],
+        about: [this.user()?.about, this.aboutValidator],
+      });
     });
   }
 
@@ -65,7 +67,7 @@ export class AccountComponent {
   aboutValidator = (control: AbstractControl) => {
     const value = control.value;
     const isValid = value?.length <= 512;
-    this.aboutHint = value.length + ' characters';
+    this.aboutHint = value?.length > 0 ? value.length + ' characters' : '';
     this.aboutVariant = value ? (isValid ? 'success' : 'danger') : 'primary';
     if (isValid) {
       return null;

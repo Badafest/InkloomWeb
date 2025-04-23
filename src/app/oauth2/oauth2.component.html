@@ -1,0 +1,8 @@
+<p class="text-lg flex gap-4 items-center">
+  @if(verifying){
+  <fa-icon [icon]="faLoading" [classes]="['animate-spin']"></fa-icon>
+  }
+  <span>{{ statusMessage }}</span>
+</p>
+
+<p class="px-4">{{ waitingMessage }}</p>

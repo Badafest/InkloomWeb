@@ -8,7 +8,11 @@
     class="flex flex-col pt-6 gap-2 justify-center border-t border-primary-dark/50"
   >
     @for(registerOption of ssoRegisterOptions; track registerOption.type){
-    <app-button classes="pill outline" [onClick]="registerOption.action">
+    <app-button
+      classes="pill outline"
+      [onClick]="registerOption.action"
+      [disabled]="registerLoading()"
+    >
       <p
         data-select="button-content"
         class="flex gap-12 justify-start items-center w-full"
@@ -84,10 +88,10 @@
 
   <app-button
     type="submit"
-    [disabled]="registerForm.invalid || registerLoading"
+    [disabled]="registerForm.invalid || registerLoading()"
   >
     <div data-select="button-content" class="flex gap-2">
-      @if(registerLoading){
+      @if(registerLoading()){
       <fa-icon [icon]="faLoading" [classes]="['animate-spin']"></fa-icon>
       }
       <span data-select="button-content">Register with Email</span>

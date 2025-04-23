@@ -49,13 +49,13 @@ export class RegisterComponent {
       type: 'google',
       icon: faGoogle,
       label: 'Register with Google',
-      action: () => {},
+      action: () => this.authService.signInWithGoogle('/login', true),
     },
     {
       type: 'facebook',
       icon: faFacebookF,
       label: 'Register with Facebook',
-      action: () => {},
+      action: () => this.authService.signInWithFacebook('/login', true),
     },
   ];
 
@@ -66,7 +66,7 @@ export class RegisterComponent {
   usernameVariant: TVariant = 'primary';
 
   registerForm: FormGroup;
-  registerLoading: boolean = false;
+  registerLoading = signal(false);
 
   constructor(
     private formBuilder: FormBuilder,
@@ -88,6 +88,12 @@ export class RegisterComponent {
       },
       { allowSignalWrites: true }
     );
+    effect(
+      () => {
+        this.registerLoading.set(this.authService.ssoAuthLoading());
+      },
+      { allowSignalWrites: true }
+    );
   }
 
   async onSubmit() {
@@ -105,20 +111,20 @@ export class RegisterComponent {
         }
         const email = this.registerForm.get('email')?.getRawValue();
         const password = this.registerForm.get('password')?.getRawValue();
-        this.registerLoading = true;
+        this.registerLoading.set(true);
 
         const registerResponse = await this.authService.register(
           username,
           email,
-          password
+          password,
+          '/login'
         );
         registerResponse.subscribe({
           complete: () => {
-            this.router.navigateByUrl('/login');
-            this.registerLoading = false;
+            this.registerLoading.set(false);
           },
           error: () => {
-            this.registerLoading = false;
+            this.registerLoading.set(false);
           },
         });
       },

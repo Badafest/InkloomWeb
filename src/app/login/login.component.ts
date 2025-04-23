@@ -66,18 +66,26 @@ export class LoginComponent {
     this.magicLoginDialog.nativeElement.showModal();
   };
 
+  queryParams = signal<Record<string, string>>({});
+
   ssoLoginOptions = [
     {
       type: 'google',
       icon: faGoogle,
       label: 'Sign in with Google',
-      action: () => {},
+      action: () =>
+        this.authService.signInWithGoogle(
+          this.queryParams()['redirectTo'] ?? '/dashboard'
+        ),
     },
     {
       type: 'facebook',
       icon: faFacebookF,
       label: 'Sign in with Facebook',
-      action: () => {},
+      action: () =>
+        this.authService.signInWithFacebook(
+          this.queryParams()['redirectTo'] ?? '/dashboard'
+        ),
     },
     {
       type: 'mail',
@@ -93,17 +101,15 @@ export class LoginComponent {
   passwordVariant: TVariant = 'primary';
 
   loginForm: FormGroup;
-  loginLoading: boolean = false;
+  loginLoading = signal(false);
 
   magicLoginForm: FormGroup;
-
-  queryParams = signal<Record<string, string>>({});
 
   _platformId = inject(PLATFORM_ID);
 
   constructor(
     private formBuilder: FormBuilder,
-    private authService: AuthService,
+    protected authService: AuthService,
     private userService: UserService,
     private router: Router,
     private route: ActivatedRoute
@@ -121,16 +127,25 @@ export class LoginComponent {
         this.route.queryParams.subscribe((params) =>
           this.queryParams.set(params)
         );
-        const user = this.userService.user();
-        if (user !== null) {
-          this.router.navigateByUrl('/account');
+      },
+      { allowSignalWrites: true }
+    );
+
+    effect(() => {
+      const user = this.userService.user();
+      if (user !== null) {
+        this.router.navigateByUrl('/account');
+      }
+      if (isPlatformBrowser(this._platformId)) {
+        const type = this.queryParams()['type'];
+        if (type === 'email') {
+          this.openMagicLoginDialog();
         }
-        if (isPlatformBrowser(this._platformId)) {
-          const type = this.queryParams()['type'];
-          if (type === 'email') {
-            this.openMagicLoginDialog();
-          }
-        }
+      }
+    });
+    effect(
+      () => {
+        this.loginLoading.set(this.authService.ssoAuthLoading());
       },
       { allowSignalWrites: true }
     );
@@ -139,7 +154,7 @@ export class LoginComponent {
   async onLoginFormSubmit() {
     const email = this.loginForm.get('email')?.getRawValue();
     const password = this.loginForm.get('password')?.getRawValue();
-    this.loginLoading = true;
+    this.loginLoading.set(true);
 
     const loginResponse = await this.authService.login(
       email,
@@ -148,17 +163,28 @@ export class LoginComponent {
     );
     loginResponse.subscribe({
       complete: () => {
-        this.loginLoading = false;
+        this.loginLoading.set(false);
       },
       error: () => {
-        this.loginLoading = false;
+        this.loginLoading.set(false);
       },
     });
   }
 
+  async onSsoLogin(type: 'GOOGLE' | 'FACEBOOK') {
+    this.loginLoading.set(true);
+    await (type === 'GOOGLE'
+      ? this.authService.signInWithGoogle(
+          this.queryParams()['redirectTo'] ?? '/dashboard'
+        )
+      : this.authService.signInWithFacebook(
+          this.queryParams()['redirectTo'] ?? '/dashboard'
+        ));
+  }
+
   async onMagicLoginFormSubmit() {
     const email = this.magicLoginForm.get('email')?.getRawValue();
-    this.loginLoading = true;
+    this.loginLoading.set(true);
 
     const loginResponse = await this.authService.magicLogin(
       email,
@@ -171,10 +197,10 @@ export class LoginComponent {
         this.router.navigateByUrl('/');
       },
       complete: () => {
-        this.loginLoading = false;
+        this.loginLoading.set(false);
       },
       error: () => {
-        this.loginLoading = false;
+        this.loginLoading.set(false);
       },
     });
   }

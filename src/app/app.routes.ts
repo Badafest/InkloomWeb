@@ -8,11 +8,13 @@ import { ResetPasswordComponent } from './reset-password/reset-password.componen
 import { AccountComponent } from './account/account.component';
 import { MagicLoginComponent } from './magic-login/magic-login.component';
 import { authGuard } from './guards/auth.guard';
+import { Oauth2Component } from './oauth2/oauth2.component';
 
 export const routes: Routes = [
   { path: 'account', component: AccountComponent, canActivate: [authGuard] },
   { path: 'login', component: LoginComponent },
   { path: 'magic-login', component: MagicLoginComponent },
+  { path: 'oauth2', component: Oauth2Component },
   { path: 'register', component: RegisterComponent },
   { path: 'reset-password', component: ResetPasswordComponent },
   { path: '', component: RootComponent },

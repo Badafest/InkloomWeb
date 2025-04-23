@@ -8,7 +8,11 @@
     class="flex flex-col pt-6 gap-2 justify-center border-t border-primary-dark/50"
   >
     @for(loginOption of ssoLoginOptions; track loginOption.type){
-    <app-button classes="pill outline" [onClick]="loginOption.action">
+    <app-button
+      classes="pill outline"
+      [onClick]="loginOption.action"
+      [disabled]="loginLoading()"
+    >
       <p
         data-select="button-content"
         class="flex gap-12 justify-start items-center w-full"
@@ -66,9 +70,9 @@
     ></fa-icon>
   </app-input-group>
 
-  <app-button type="submit" [disabled]="loginForm.invalid || loginLoading">
+  <app-button type="submit" [disabled]="loginForm.invalid || loginLoading()">
     <div data-select="button-content" class="flex gap-2">
-      @if(loginLoading){
+      @if(loginLoading()){
       <fa-icon [icon]="faLoading" [classes]="['animate-spin']"></fa-icon>
       }
       <span data-select="button-content">Sign in with Password</span>
@@ -117,7 +121,7 @@
             variant="danger"
             [onClick]="closeMagicLoginDialog"
             type="button"
-            [disabled]="loginLoading"
+            [disabled]="loginLoading()"
           >
             <span data-select="button-content">Cancel</span>
           </app-button>
@@ -125,14 +129,14 @@
         <div class="w-full flex flex-col">
           <app-button
             type="submit"
-            [disabled]="magicLoginForm.invalid || loginLoading"
+            [disabled]="magicLoginForm.invalid || loginLoading()"
           >
             <div
               class="flex gap-4 w-max items-center"
               data-select="button-content"
             >
               <span>Continue</span>
-              @if(loginLoading){
+              @if(loginLoading()){
               <fa-icon
                 [icon]="faLoading"
                 [classes]="['animate-spin']"

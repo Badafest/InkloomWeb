@@ -33,6 +33,7 @@ import { HttpClientModule } from '@angular/common/http';
 import { UserService } from '../services/user.service';
 import { ActivatedRoute, Router } from '@angular/router';
 import { isPlatformBrowser } from '@angular/common';
+import { SsoAuthType } from '../models/user';
 
 @Component({
   selector: 'app-login',
@@ -134,8 +135,13 @@ export class LoginComponent {
     effect(() => {
       const user = this.userService.user();
       if (user !== null) {
-        this.router.navigateByUrl('/account');
+        this.router.navigateByUrl(
+          this.queryParams()['redirectTo'] ?? '/dashboard'
+        );
       }
+    });
+
+    effect(() => {
       if (isPlatformBrowser(this._platformId)) {
         const type = this.queryParams()['type'];
         if (type === 'email') {
@@ -143,12 +149,6 @@ export class LoginComponent {
         }
       }
     });
-    effect(
-      () => {
-        this.loginLoading.set(this.authService.ssoAuthLoading());
-      },
-      { allowSignalWrites: true }
-    );
   }
 
   async onLoginFormSubmit() {
@@ -171,7 +171,7 @@ export class LoginComponent {
     });
   }
 
-  async onSsoLogin(type: 'GOOGLE' | 'FACEBOOK') {
+  async onSsoLogin(type: SsoAuthType) {
     this.loginLoading.set(true);
     await (type === 'GOOGLE'
       ? this.authService.signInWithGoogle(

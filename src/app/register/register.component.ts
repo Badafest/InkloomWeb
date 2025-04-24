@@ -83,14 +83,8 @@ export class RegisterComponent {
       () => {
         const user = this.userService.user();
         if (user !== null) {
-          this.router.navigateByUrl('/account');
+          this.router.navigateByUrl('/dashboard');
         }
-      },
-      { allowSignalWrites: true }
-    );
-    effect(
-      () => {
-        this.registerLoading.set(this.authService.ssoAuthLoading());
       },
       { allowSignalWrites: true }
     );

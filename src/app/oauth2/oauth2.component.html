@@ -1,8 +1,21 @@
 <p class="text-lg flex gap-4 items-center">
   @if(verifying){
   <fa-icon [icon]="faLoading" [classes]="['animate-spin']"></fa-icon>
+  }@else if(tokenMessage.toLowerCase().includes('fail')){
+  <fa-icon [icon]="faFailed"></fa-icon>
+  }@else if(tokenMessage.length){
+  <fa-icon [icon]="faSuccess"></fa-icon>
   }
-  <span>{{ statusMessage }}</span>
+  <span>{{ tokenMessage }}</span>
 </p>
 
-<p class="px-4">{{ waitingMessage }}</p>
+<p class="text-lg flex gap-4 items-center">
+  @if(loggingIn){
+  <fa-icon [icon]="faLoading" [classes]="['animate-spin']"></fa-icon>
+  }@else if(loginMessage.toLowerCase().includes('fail')){
+  <fa-icon [icon]="faFailed"></fa-icon>
+  }@else if(loginMessage.length){
+  <fa-icon [icon]="faSuccess"></fa-icon>
+  }
+  <span>{{ loginMessage }}</span>
+</p>

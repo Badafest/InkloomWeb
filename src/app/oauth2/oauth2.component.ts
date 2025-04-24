@@ -1,8 +1,9 @@
 import { Component, inject, OnInit, PLATFORM_ID } from '@angular/core';
 import { FaIconComponent } from '@fortawesome/angular-fontawesome';
-import { faSpinner } from '@fortawesome/free-solid-svg-icons';
+import { faCheck, faCross, faSpinner } from '@fortawesome/free-solid-svg-icons';
 import { isPlatformBrowser } from '@angular/common';
 import { AuthService } from '../services/auth.service';
+import { SsoAuthType } from '../models/user';
 
 @Component({
   selector: 'app-oauth2',
@@ -12,16 +13,17 @@ import { AuthService } from '../services/auth.service';
   styleUrl: './oauth2.component.css',
 })
 export class Oauth2Component implements OnInit {
-  verifying: boolean = true;
   faLoading = faSpinner;
-  statusMessage: string = 'Parsing access token...';
-  waitingMessage: string = '';
+  faSuccess = faCheck;
+  faFailed = faCross;
+
+  verifying: boolean = true;
+  loggingIn: boolean = false;
+  tokenMessage: string = 'Parsing access token...';
+  loginMessage: string = '';
 
   private _platformId = inject(PLATFORM_ID);
-
-  closeWindow() {
-    window.close();
-  }
+  private _authService = inject(AuthService);
 
   ngOnInit(): void {
     if (!isPlatformBrowser(this._platformId)) {
@@ -29,23 +31,51 @@ export class Oauth2Component implements OnInit {
     }
     try {
       const hashParams = new URLSearchParams(window.location.hash.substring(1));
-      const accessToken = hashParams.get('access_token');
-      localStorage.setItem(AuthService.ssoTokenKey, accessToken ?? '');
-      this.statusMessage = 'Token parse successful ...';
-    } catch (error) {
-      this.statusMessage = 'Token parse failed ...';
-    } finally {
+      const ssoToken = hashParams.get('access_token');
+
+      if (!ssoToken) {
+        throw new Error('Access token not found');
+      }
+
+      const stateParamsBase64 =
+        hashParams.get('state') ??
+        new URLSearchParams(window.location.search).get('state') ??
+        '';
+
+      const decodedParams = atob(stateParamsBase64);
+
+      const queryParams = new URLSearchParams(decodedParams);
+
+      const authType = queryParams.get('type') as SsoAuthType;
+      const newUser = queryParams.get('new_user') === 'true';
+      const redirectTo =
+        queryParams.get('redirect_to') ?? (newUser ? '/login' : '/dashboard');
+
+      this.tokenMessage = 'Token parse successful ...';
       this.verifying = false;
-      let seconds = 6;
-      const closeInterval = setInterval(() => {
-        seconds -= 1;
-        this.waitingMessage = `Closing in ${seconds} seconds ...`;
-        if (seconds <= 0 || !localStorage.getItem(AuthService.ssoTokenKey)) {
-          localStorage.removeItem(AuthService.ssoTokenKey);
-          clearInterval(closeInterval);
-          this.closeWindow();
-        }
-      }, 1000);
+
+      this.loginMessage = 'Logging in ...';
+      this.loggingIn = true;
+
+      this._authService
+        .ssoLogin(ssoToken, authType, redirectTo, newUser)
+        .then((loginResponse) => {
+          (loginResponse as any).subscribe({
+            error: () => {
+              this.loggingIn = false;
+              this.loginMessage = 'Login failed ...';
+            },
+            complete: () => {
+              this.loggingIn = false;
+              this.loginMessage = 'Login successful ...';
+            },
+          });
+        });
+
+      // localStorage.setItem(AuthService.ssoTokenKey, accessToken ?? '');
+    } catch (error) {
+      this.tokenMessage = 'Token parse failed ...';
+      this.verifying = false;
     }
   }
 }

@@ -2,7 +2,7 @@ import { LoginResponse } from '../models/login-response';
 import { ApiService } from './api.service';
 import { inject, Injectable, type Signal, signal } from '@angular/core';
 import { UserService } from './user.service';
-import { User } from '../models/user';
+import { SsoAuthType, User } from '../models/user';
 import { Observable } from 'rxjs';
 import { environment } from '../../environments/environment';
 
@@ -13,15 +13,17 @@ export class AuthService extends ApiService {
   private _userService = inject(UserService);
   private _notificationIds: string[] = [];
 
-  private _ssoAuthLoading = signal(false);
-
-  public get ssoAuthLoading(): Signal<boolean> {
-    return this._ssoAuthLoading;
-  }
-
-  private readonly _ssoRedirectUri = `${environment.webBaseUrl}/oauth2`;
-
-  public static readonly ssoTokenKey = 'sso:token';
+  private readonly _ssoRedirectUri = (
+    type: SsoAuthType,
+    newUser: boolean,
+    redirectTo: string
+  ) => {
+    const uri = `${environment.webBaseUrl}/oauth2`;
+    const state = btoa(
+      `type=${type}&new_user=${newUser}&redirect_to=${redirectTo}`
+    );
+    return [uri, state];
+  };
 
   public async login(
     email: string,
@@ -75,85 +77,62 @@ export class AuthService extends ApiService {
   }
 
   public async ssoLogin(
-    authUrl: string,
-    type: 'GOOGLE' | 'FACEBOOK' = 'GOOGLE',
+    ssoToken: string,
+    type: SsoAuthType = 'GOOGLE',
     redirectTo: string = '/',
     newUser: boolean = false
   ) {
-    this._ssoAuthLoading.set(true);
-    // remove any previously set token
-    localStorage.removeItem(AuthService.ssoTokenKey);
-    window.open(authUrl, 'Sign in to Inkloom', 'width=500,height=600');
+    const loginResponse = await (newUser
+      ? this.post<User | null>('auth/register', {
+          body: { password: ssoToken, type },
+          skipAuthorization: true,
+        })
+      : this.post<LoginResponse | null>('auth/sso-login', {
+          body: { token: ssoToken, type },
+          skipAuthorization: true,
+        }));
 
-    let checkCount = 0;
-    const checkInterval = setInterval(async () => {
-      const ssoToken = localStorage.getItem(AuthService.ssoTokenKey) ?? '';
-      // remove ssoToken immediately after accessing it
-      localStorage.removeItem(AuthService.ssoTokenKey);
+    if (!newUser) {
+      this.handleLoginResponse(
+        loginResponse as Observable<{ data: LoginResponse }>,
+        redirectTo
+      );
+    } else {
+      this.handleRegisterResponse(
+        loginResponse as Observable<{ data: User }>,
+        redirectTo
+      );
+    }
 
-      if (!ssoToken) {
-        if (checkCount > 30) {
-          clearInterval(checkInterval);
-        }
-        checkCount++;
-        return;
-      }
-
-      clearInterval(checkInterval);
-
-      const loginResponse = await (newUser
-        ? this.post<User | null>('auth/register', {
-            body: { password: ssoToken, type },
-            skipAuthorization: true,
-          })
-        : this.post<LoginResponse | null>('auth/sso-login', {
-            body: { token: ssoToken, type },
-            skipAuthorization: true,
-          }));
-
-      (loginResponse as any).subscribe({
-        error: () => {
-          this._ssoAuthLoading.set(false);
-        },
-        complete: () => {
-          this._ssoAuthLoading.set(false);
-        },
-      });
-
-      if (!newUser) {
-        this.handleLoginResponse(
-          loginResponse as Observable<{ data: LoginResponse }>,
-          redirectTo
-        );
-      } else {
-        this.handleRegisterResponse(
-          loginResponse as Observable<{ data: User }>,
-          redirectTo
-        );
-      }
-    }, 1000);
+    return loginResponse;
   }
 
   async signInWithGoogle(redirectTo: string = '/', newUser: boolean = false) {
     const clientId = environment.googleClientId;
     const scope = 'email profile';
 
-    const authUrl = `https://accounts.google.com/o/oauth2/v2/auth?client_id=${clientId}&response_type=token&redirect_uri=${this._ssoRedirectUri}&scope=${scope}`;
+    const [redirectUri, state] = this._ssoRedirectUri(
+      'GOOGLE',
+      newUser,
+      redirectTo
+    );
+    const authUrl = `https://accounts.google.com/o/oauth2/v2/auth?client_id=${clientId}&response_type=token&redirect_uri=${redirectUri}&scope=${scope}&state=${state}`;
 
-    await this.ssoLogin(authUrl, 'GOOGLE', redirectTo, newUser);
+    window.open(authUrl, '_blank');
   }
 
   async signInWithFacebook(redirectTo: string = '/', newUser: boolean = false) {
     const clientId = environment.facebookAppId;
     var scope = 'email,public_profile';
 
-    const authUrl = `https://www.facebook.com/v12.0/dialog/oauth?client_id=${clientId}&response_type=token&redirect_uri=${this._ssoRedirectUri}&scope=${scope}`;
+    const [redirectUri, state] = this._ssoRedirectUri(
+      'FACEBOOK',
+      newUser,
+      redirectTo
+    );
 
-    await this.ssoLogin(authUrl, 'FACEBOOK', redirectTo, newUser);
-  }
-
-  ssoLogOut(): void {
-    localStorage.removeItem(AuthService.ssoTokenKey);
+    const authUrl = `https://www.facebook.com/v12.0/dialog/oauth?client_id=${clientId}&response_type=token&redirect_uri=${redirectUri}?state=${state}&scope=${scope}`;
+    window.open(authUrl, '_blank');
   }
 
   private handleLoginResponse(

@@ -17,7 +17,6 @@ import {
   ReactiveFormsModule,
 } from '@angular/forms';
 import { TVariant } from '../../ui/types';
-import { AuthService } from '../services/auth.service';
 
 @Component({
   standalone: true,
@@ -43,7 +42,6 @@ export class AccountComponent {
 
   constructor(
     private userService: UserService,
-    private authService: AuthService,
     private formBuilder: FormBuilder
   ) {
     effect(() => {
@@ -64,7 +62,6 @@ export class AccountComponent {
 
   logout = () => {
     this.userService.logout();
-    this.authService.ssoLogOut();
   };
 
   aboutValidator = (control: AbstractControl) => {

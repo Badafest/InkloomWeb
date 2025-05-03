@@ -10,7 +10,7 @@
     @for(loginOption of ssoLoginOptions; track loginOption.type){
     <app-button
       classes="pill outline"
-      [onClick]="loginOption.action"
+      (click)="loginOption.action()"
       [disabled]="loginLoading()"
     >
       <p
@@ -24,7 +24,7 @@
     }
   </div>
 
-  <div class="flex justify-center gap-1 items-center">
+  <div class="flex justify-center gap-1 items-center my-2">
     <span class="border-b border-primary-dark/50 w-full"></span>
     <span class="mb-1">OR</span>
     <span class="border-b border-primary-dark/50 w-full"></span>
@@ -88,66 +88,61 @@
 </form>
 
 <!-- Magic Login Dialog -->
-<dialog #magicLoginDialog class="backdrop:bg-white/75">
-  <div class="bg-white p-4 shadow-md border border-primary-dark w-96">
-    <form
-      [formGroup]="magicLoginForm"
-      (ngSubmit)="onMagicLoginFormSubmit()"
-      class="flex flex-col gap-2"
+<dialog #magicLoginDialog>
+  <form
+    [formGroup]="magicLoginForm"
+    (ngSubmit)="onMagicLoginFormSubmit()"
+    class="flex flex-col gap-2"
+  >
+    <p class="mb-3">
+      If you have verified your email address, we'll send a magic link to your
+      inbox.
+    </p>
+    <app-input-group
+      id="magic-login-email"
+      name="email"
+      label="Your Email"
+      placeholder="example@mail.com"
+      type="email"
+      hint="{{ magicLoginForm.get('email')?.errors?.['email'] }}"
+      [variant]="emailVariant"
+      formControlName="email"
     >
-      <p class="mb-3">
-        If you have verified your email address, we'll send a magic link to your
-        inbox.
-      </p>
-      <app-input-group
-        id="magic-login-email"
-        name="email"
-        label="Your Email"
-        placeholder="example@mail.com"
-        type="email"
-        hint="{{ magicLoginForm.get('email')?.errors?.['email'] }}"
-        [variant]="emailVariant"
-        formControlName="email"
-      >
-        <fa-icon
-          class="{{ emailVariant }}"
-          data-select="input-group-input-left-icon"
-          [icon]="faMailIcon"
-        ></fa-icon>
-      </app-input-group>
-      <div class="mt-4 flex gap-2 justify-between">
-        <div class="w-full flex flex-col">
-          <app-button
-            variant="danger"
-            [onClick]="closeMagicLoginDialog"
-            type="button"
-            [disabled]="loginLoading()"
-          >
-            <span data-select="button-content">Cancel</span>
-          </app-button>
-        </div>
-        <div class="w-full flex flex-col">
-          <app-button
-            type="submit"
-            [disabled]="magicLoginForm.invalid || loginLoading()"
-          >
-            <div
-              class="flex gap-4 w-max items-center"
-              data-select="button-content"
-            >
-              <span>Continue</span>
-              @if(loginLoading()){
-              <fa-icon
-                [icon]="faLoading"
-                [classes]="['animate-spin']"
-              ></fa-icon>
-              }@else {
-              <fa-icon [icon]="faNextIcon"></fa-icon>
-              }
-            </div>
-          </app-button>
-        </div>
+      <fa-icon
+        class="{{ emailVariant }}"
+        data-select="input-group-input-left-icon"
+        [icon]="faMailIcon"
+      ></fa-icon>
+    </app-input-group>
+    <div class="mt-4 flex gap-2 justify-between">
+      <div class="w-full flex flex-col">
+        <app-button
+          variant="danger"
+          (click)="closeMagicLoginDialog()"
+          type="button"
+          [disabled]="loginLoading()"
+        >
+          <span data-select="button-content">Cancel</span>
+        </app-button>
       </div>
-    </form>
-  </div>
+      <div class="w-full flex flex-col">
+        <app-button
+          type="submit"
+          [disabled]="magicLoginForm.invalid || loginLoading()"
+        >
+          <div
+            class="flex gap-4 w-max items-center"
+            data-select="button-content"
+          >
+            <span>Continue</span>
+            @if(loginLoading()){
+            <fa-icon [icon]="faLoading" [classes]="['animate-spin']"></fa-icon>
+            }@else {
+            <fa-icon [icon]="faNextIcon"></fa-icon>
+            }
+          </div>
+        </app-button>
+      </div>
+    </div>
+  </form>
 </dialog>

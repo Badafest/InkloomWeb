@@ -168,12 +168,13 @@ export class AuthService extends ApiService {
 
   public async register(
     username: string,
+    displayName: string,
     email: string,
     password: string,
     redirectTo: string = '/login'
   ) {
     const registerResponse = await this.post<User>('auth/register', {
-      body: { username, email, password },
+      body: { username, displayName, email, password },
       skipAuthorization: true,
     });
     this.handleRegisterResponse(registerResponse, redirectTo);

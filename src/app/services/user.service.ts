@@ -53,17 +53,37 @@ export class UserService extends ApiService {
   }
 
   public async updateUser(updatedUser: Partial<User>) {
+    const formData = new FormData();
+
+    formData.append('about', updatedUser.about ?? '');
+    formData.append('avatar', updatedUser.avatar ?? '');
+    formData.append('avatarImage', updatedUser.avatarImage ?? '');
+    formData.append('displayName', updatedUser.displayName ?? '');
+
     const response = await this.patch<User>('user', {
-      body: {
-        about: updatedUser.about,
-        avatar: updatedUser.avatar,
-      },
+      body: formData,
+      nonJsonContent: true,
     });
     response.subscribe({
       next: ({ data }) => this._user.set(data),
       error: (err) => {
         this.notifications.addNotification(
           'User Update Failed',
+          err?.error?.message ?? err?.message ?? err,
+          'danger',
+          5000
+        );
+      },
+    });
+    return response;
+  }
+
+  public async deleteUser() {
+    const response = await this.delete<any>(`user`);
+    response.subscribe({
+      error: (err) => {
+        this.notifications.addNotification(
+          'User Delete Failed',
           err?.error?.message ?? err?.message ?? err,
           'danger',
           5000

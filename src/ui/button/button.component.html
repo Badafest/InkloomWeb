@@ -1,8 +1,3 @@
-<button
-  [type]="type"
-  (click)="onClick($event)"
-  [ngClass]="variant + ' ' + classes"
-  [disabled]="disabled"
->
+<button [type]="type" [ngClass]="variant + ' ' + classes" [disabled]="disabled">
   <ng-content select="[data-select=button-content]" />
 </button>

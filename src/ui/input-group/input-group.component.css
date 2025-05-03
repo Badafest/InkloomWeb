@@ -11,7 +11,7 @@
 
 .input-group-input input,
 .input-group-input textarea {
-  @apply border-none py-2 outline-none flex-grow max-h-60 min-h-10;
+  @apply border-none py-3 outline-none flex-grow max-h-60 min-h-10;
 }
 
 .input-group-input textarea {

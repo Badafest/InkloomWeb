@@ -10,7 +10,7 @@
     @for(registerOption of ssoRegisterOptions; track registerOption.type){
     <app-button
       classes="pill outline"
-      [onClick]="registerOption.action"
+      (click)="registerOption.action()"
       [disabled]="registerLoading()"
     >
       <p
@@ -34,13 +34,29 @@
     id="username"
     name="username"
     label="Username"
-    placeholder="example"
+    placeholder="john2025"
     hint="{{ registerForm.get('username')?.errors?.['username'] }}"
     [variant]="usernameVariant"
     formControlName="username"
   >
     <fa-icon
       class="{{ usernameVariant }}"
+      data-select="input-group-input-left-icon"
+      [icon]="faUserIcon"
+    ></fa-icon>
+  </app-input-group>
+
+  <app-input-group
+    id="displayName"
+    name="displayName"
+    label="Full Name"
+    placeholder="John Doe"
+    hint="{{ registerForm.get('displayName')?.errors?.['displayName'] }}"
+    [variant]="displayNameVariant"
+    formControlName="displayName"
+  >
+    <fa-icon
+      class="{{ displayNameVariant }}"
       data-select="input-group-input-left-icon"
       [icon]="faUserIcon"
     ></fa-icon>

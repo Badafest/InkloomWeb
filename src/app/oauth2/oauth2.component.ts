@@ -1,6 +1,6 @@
 import { Component, inject, OnInit, PLATFORM_ID } from '@angular/core';
 import { FaIconComponent } from '@fortawesome/angular-fontawesome';
-import { faCheck, faCross, faSpinner } from '@fortawesome/free-solid-svg-icons';
+import { faCheck, faClose, faSpinner } from '@fortawesome/free-solid-svg-icons';
 import { isPlatformBrowser } from '@angular/common';
 import { AuthService } from '../services/auth.service';
 import { SsoAuthType } from '../models/user';
@@ -15,7 +15,7 @@ import { SsoAuthType } from '../models/user';
 export class Oauth2Component implements OnInit {
   faLoading = faSpinner;
   faSuccess = faCheck;
-  faFailed = faCross;
+  faFailed = faClose;
 
   verifying: boolean = true;
   loggingIn: boolean = false;

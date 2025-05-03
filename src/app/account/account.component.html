@@ -1,81 +1,183 @@
 <div class="account-container">
-  @if(isEditing){
-  <form
-    class="flex flex-col gap-4 mt-4"
-    [formGroup]="accountForm"
-    (ngSubmit)="saveChanges()"
+  <div class="flex items-center gap-2">
+    <app-avatar
+      [size]="80"
+      [username]="user()?.username ?? 'X'"
+      [image]="user()?.avatar"
+    ></app-avatar>
+    <div class="flex flex-col items-start">
+      <span class="text-lg font-semibold"
+        >{{ user()?.displayName ?? "Anonymous" }}
+      </span>
+      <span class="font-light">{{ user()?.username }} </span>
+      <p class="flex gap-1">
+        {{ user()?.email ?? "N/A" }}
+        <span>
+          @if(!user()?.emailVerified){
+          <fa-icon [icon]="faWarning" class="text-danger"></fa-icon>
+          }@else{
+          <fa-icon [icon]="faVerified" class="text-success"></fa-icon>}
+        </span>
+      </p>
+    </div>
+  </div>
+  <p class="my-6">
+    {{
+      user()?.about || "Update your profile to include something about yourself"
+    }}
+  </p>
+  <div
+    class="flex flex-col md:grid md:grid-cols-3 gap-3 mt-6 pt-4 border-t border-primary-dark"
   >
+    <app-button variant="primary" (click)="openAccountUpdateDialog()">
+      <span data-select="button-content" class="flex gap-4 w-full">
+        <fa-icon [icon]="faEditIcon" />
+        Update Profile</span
+      >
+    </app-button>
+    <app-button variant="danger" (click)="logout()">
+      <span data-select="button-content" class="flex gap-4 w-full">
+        <fa-icon [icon]="faLogout"></fa-icon>
+        Logout
+      </span>
+    </app-button>
+    <app-button variant="danger" (click)="openAccountDeleteDialog()">
+      <span data-select="button-content" class="flex gap-4 w-full">
+        <fa-icon [icon]="faDeleteIcon" />
+        Delete Account
+      </span>
+    </app-button>
+  </div>
+</div>
+
+<!-- Account Update Dialog -->
+<dialog #accountUpdateDialog>
+  <div class="w-[500px] flex flex-col gap-4">
+    <div class="flex justify-between items-center gap-4">
+      <app-avatar
+        [size]="80"
+        [username]="user()?.username ?? ''"
+        [image]="avatarImageUrl"
+        (click)="avatarImageField.click()"
+        [classList]="'cursor-pointer flex-shrink-0'"
+      ></app-avatar>
+      <p>
+        Click on the avatar to upload an image (Max Size: 2MB) or provide an
+        image URL below.
+      </p>
+    </div>
+    <input
+      #avatarImageField
+      type="file"
+      name="avatarImage"
+      hidden
+      (change)="handleAvatarImageChange($event)"
+    />
+    <div class="flex w-full justify-between items-end gap-3">
+      <div class="w-full">
+        <app-input-group
+          type="url"
+          label="Replace Avatar by URL"
+          placeholder="https://example.com/profile_pic.png"
+          name="avatar"
+          [hint]="avatarHint"
+          [variant]="avatarVariant"
+          [value]="updatedAccount().avatar ?? ''"
+          [onChange]="handleAvatarChange"
+          [disabled]="updatedAccount().avatarImage !== undefined"
+        />
+      </div>
+      <div class="w-max flex-shrink-0 mb-1">
+        <app-button variant="danger" (click)="clearAvatar()">
+          <span data-select="button-content"> Remove Avatar </span>
+        </app-button>
+      </div>
+    </div>
+
     <app-input-group
-      type="url"
-      label="Change your avatar"
-      placeholder="Avatar"
-      name="avatar"
-      formControlName="avatar"
+      type="text"
+      label="Your Name"
+      placeholder="John Doe"
+      name="displayName"
+      [value]="updatedAccount().displayName ?? ''"
+      [onChange]="handleNameChange"
+      [hint]="nameHint"
+      [variant]="nameVariant"
     />
     <app-input-group
       type="textarea"
-      label="Write about yourself..."
-      placeholder="About"
+      label="About You"
+      placeholder="Write about your hobbies, interests and expertise ..."
       name="about"
-      formControlName="about"
+      [value]="updatedAccount().about ?? ''"
+      [onChange]="handleAboutChange"
       [hint]="aboutHint"
       [variant]="aboutVariant"
     />
-    <div class="flex gap-2">
+    <div class="flex gap-2 border-t border-primary-dark pt-4">
       <div class="w-1/2 flex flex-col">
-        <app-button (click)="toggleEdit()" variant="danger">
-          <span data-select="button-content">Cancel</span>
+        <app-button
+          (click)="closeAccountUpdateDialog()"
+          variant="danger"
+          [type]="'button'"
+          [disabled]="isEditing"
+        >
+          <span data-select="button-content" class="flex gap-2">
+            <fa-icon [icon]="faClose" />
+            Cancel</span
+          >
         </app-button>
       </div>
       <div class="w-1/2 flex flex-col">
         <app-button
-          type="submit"
+          [type]="'submit'"
+          (click)="updateAccount()"
           variant="success"
           [disabled]="
-            accountForm.invalid || accountForm.getError('about.maxLength')
+            aboutVariant === 'danger' ||
+            avatarVariant === 'danger' ||
+            nameVariant === 'danger' ||
+            isEditing
           "
-          ><span data-select="button-content">Save Changes</span>
+          ><span data-select="button-content" class="flex gap-2">
+            <fa-icon [icon]="faSave" />
+            Save Changes</span
+          >
         </app-button>
       </div>
     </div>
-  </form>
-  }@else {
-  <div class="flex flex-wrap justify-between gap-4 items-start py-4 mb-2">
-    <div>
-      <div class="flex items-center gap-2">
-        <app-avatar
-          [size]="60"
-          [username]="user()?.username ?? ''"
-          [image]="user()?.avatar"
-        ></app-avatar>
-        <div class="flex flex-col items-start">
-          <span class="text-xl"
-            >{{ user()?.username }}
-            <span class="text-base">
-              @if(!user()?.emailVerified){
-              <fa-icon [icon]="faWarning" class="text-danger"></fa-icon>
-              }@else{
-              <fa-icon [icon]="faVerified" class="text-success"></fa-icon>}
-            </span>
-          </span>
-          <p>
-            {{ user()?.email }}
-          </p>
-        </div>
-      </div>
-    </div>
-    <app-button variant="danger" [onClick]="logout">
-      <div class="flex items-center gap-2" data-select="button-content">
-        <fa-icon [icon]="faLogout"></fa-icon>
-        <span>Logout</span>
-      </div>
-    </app-button>
   </div>
-  <p class="pb-2 mb-4 border-b border-b-primary-dark">
-    {{ user()?.about || "No bio available" }}
-  </p>
-  <app-button (click)="toggleEdit()" variant="primary">
-    <span data-select="button-content">Edit Profile</span>
-  </app-button>
-  }
-</div>
+</dialog>
+
+<!-- Account Delete Dialog -->
+<dialog #accountDeleteDialog>
+  <div class="flex flex-col gap-4 p-4 max-w-md">
+    <h5>Delete Account</h5>
+    <hr class="border-primary-dark" />
+    <p>
+      Once you delete your account, you won't be able to log in again. Are you
+      sure you want to proceed?
+    </p>
+    <div class="text-sm">
+      <p>All your blogs will be deleted too.</p>
+      <p>Your account can not be restored after 30 days of deletion.</p>
+    </div>
+    <hr class="border-primary-dark" />
+    <div class="flex justify-between">
+      <app-button
+        variant="primary"
+        (click)="closeAccountDeleteDialog()"
+        [disabled]="isEditing"
+      >
+        <span data-select="button-content"> Cancel </span>
+      </app-button>
+      <app-button
+        variant="danger"
+        (click)="deleteAccount()"
+        [disabled]="isEditing"
+      >
+        <span data-select="button-content"> Confirm </span>
+      </app-button>
+    </div>
+  </div>
+</dialog>

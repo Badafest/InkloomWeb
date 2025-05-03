@@ -4,7 +4,7 @@
 @tailwind utilities;
 
 * {
-  @apply text-inherit bg-inherit;
+  @apply text-inherit bg-transparent;
 }
 
 *:disabled {
@@ -42,4 +42,8 @@ h2 {
 
 h1 {
   @apply text-9xl font-bold;
+}
+
+dialog {
+  @apply backdrop:bg-black/65 bg-white border-primary-dark p-6 rounded-md w-max shadow-md;
 }

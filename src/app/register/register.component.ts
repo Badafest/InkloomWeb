@@ -64,6 +64,7 @@ export class RegisterComponent {
   emailVariant: TVariant = 'primary';
   passwordVariant: TVariant = 'primary';
   usernameVariant: TVariant = 'primary';
+  displayNameVariant: TVariant = 'primary';
 
   registerForm: FormGroup;
   registerLoading = signal(false);
@@ -76,6 +77,7 @@ export class RegisterComponent {
   ) {
     this.registerForm = this.formBuilder.group({
       username: ['', this.usernameValidator],
+      displayName: ['', this.displayNameValidator],
       email: ['', this.emailValidator],
       password: ['', this.passwordValidator],
     });
@@ -105,12 +107,15 @@ export class RegisterComponent {
         }
         const email = this.registerForm.get('email')?.getRawValue();
         const password = this.registerForm.get('password')?.getRawValue();
+        const displayName = this.registerForm.get('displayName')?.getRawValue();
+
         this.registerLoading.set(true);
 
         const registerResponse = await this.authService.register(
           username,
           email,
           password,
+          displayName,
           '/login'
         );
         registerResponse.subscribe({
@@ -142,6 +147,22 @@ export class RegisterComponent {
       username: value
         ? 'Username can contain lowercase alphabets (a-z)\nand digits (0-9) only'
         : 'Username is required',
+    };
+  };
+
+  displayNameValidator = (control: AbstractControl) => {
+    const value = control.value;
+    const isValid = value.length > 0;
+    this.displayNameVariant = value
+      ? isValid
+        ? 'success'
+        : 'danger'
+      : 'primary';
+    if (isValid) {
+      return null;
+    }
+    return {
+      displayName: 'Name is required',
     };
   };
 

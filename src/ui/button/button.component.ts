@@ -12,7 +12,6 @@ import { CommonModule } from '@angular/common';
 export class ButtonComponent {
   @Input() variant: TVariant = 'primary';
   @Input() type: TButtonType = 'button';
-  @Input() onClick: EventListener = () => {};
   @Input() disabled: boolean = false;
   @Input() classes: string = '';
 }

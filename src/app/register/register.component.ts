@@ -85,7 +85,7 @@ export class RegisterComponent {
       () => {
         const user = this.userService.user();
         if (user !== null) {
-          this.router.navigateByUrl('/dashboard');
+          this.router.navigateByUrl('/studio');
         }
       },
       { allowSignalWrites: true }
@@ -113,9 +113,9 @@ export class RegisterComponent {
 
         const registerResponse = await this.authService.register(
           username,
+          displayName,
           email,
           password,
-          displayName,
           '/login'
         );
         registerResponse.subscribe({

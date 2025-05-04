@@ -49,7 +49,7 @@ export class Oauth2Component implements OnInit {
       const authType = queryParams.get('type') as SsoAuthType;
       const newUser = queryParams.get('new_user') === 'true';
       const redirectTo =
-        queryParams.get('redirect_to') ?? (newUser ? '/login' : '/dashboard');
+        queryParams.get('redirect_to') ?? (newUser ? '/login' : '/studio');
 
       this.tokenMessage = 'Token parse successful ...';
       this.verifying = false;

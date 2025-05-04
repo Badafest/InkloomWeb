@@ -29,8 +29,7 @@ export class UserService extends ApiService {
         this.notifications.addNotification(
           'Username Check Failed',
           err?.error?.message ?? err?.message ?? err,
-          'danger',
-          5000
+          'danger'
         );
       },
     });
@@ -70,8 +69,7 @@ export class UserService extends ApiService {
         this.notifications.addNotification(
           'User Update Failed',
           err?.error?.message ?? err?.message ?? err,
-          'danger',
-          5000
+          'danger'
         );
       },
     });
@@ -85,8 +83,7 @@ export class UserService extends ApiService {
         this.notifications.addNotification(
           'User Delete Failed',
           err?.error?.message ?? err?.message ?? err,
-          'danger',
-          5000
+          'danger'
         );
       },
     });
@@ -99,5 +96,57 @@ export class UserService extends ApiService {
       .filter((key) => /^auth\:/.test(key))
       .forEach((key) => localStorage.removeItem(key));
     this.router.navigateByUrl('/');
+  }
+
+  public async verifyEmail(token?: string, redirectTo: string = '/account') {
+    const response = await this.post<any>(`user/verify-email`, {
+      body: { token },
+    });
+    response.subscribe({
+      error: (err) => {
+        this.notifications.addNotification(
+          'Verify Email Failed',
+          err?.error?.message ?? err?.message ?? err,
+          'danger'
+        );
+      },
+      next: () => {
+        if (token) {
+          this._user.update(
+            (prev) => ({ ...prev, emailVerified: true } as User)
+          );
+          this.router.navigateByUrl(redirectTo);
+        }
+      },
+    });
+    return response;
+  }
+
+  public async changePassword(
+    email: string,
+    token: string,
+    password: string,
+    redirectTo: string = '/login'
+  ) {
+    const response = await this.patch<any>(`user/change-password`, {
+      body: { email, token, password },
+      skipAuthorization: true,
+    });
+    response.subscribe({
+      error: (err) => {
+        this.notifications.addNotification(
+          'Change Password Failed',
+          err?.error?.message ?? err?.message ?? err,
+          'danger'
+        );
+      },
+      next: () => {
+        if (token) {
+          this.logout();
+          this.router.navigateByUrl(redirectTo);
+        }
+      },
+    });
+    return response;
   }
 }

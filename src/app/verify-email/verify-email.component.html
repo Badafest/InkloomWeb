@@ -1,0 +1,50 @@
+<div
+  class="flex flex-col gap-3 items-center justify-center min-h-[300px] max-w-md mx-auto p-6"
+>
+  <h2 class="text-xl font-semibold mb-4">Verify Your Email</h2>
+  <hr class="w-full" />
+  <form
+    class="flex flex-col gap-4 max-w-md text-center mt-4"
+    (ngSubmit)="onSubmit()"
+  >
+    <label for="otp0" class="text-base font-medium"
+      >Enter the code sent to your email:</label
+    >
+    <div class="flex gap-2 w-full justify-center">
+      @for (i of [0, 1, 2, 3, 4, 5]; track i) {
+      <input
+        id="otp{{ i }}"
+        name="otp{{ i }}"
+        type="text"
+        maxlength="1"
+        pattern="[0-9]"
+        inputmode="numeric"
+        autocomplete="one-time-code"
+        class="w-12 h-12 text-center text-lg border border-primary-dark rounded focus:outline-none focus:ring-2 focus:ring-primary-dark"
+        [(ngModel)]="otpDigits[i]"
+        (input)="onOtpInput($event, i)"
+        (keydown)="onOtpKeydown($event, i)"
+        (paste)="onOtpPaste($event)"
+        required
+      />
+      }
+    </div>
+    @if (error) {
+    <div class="text-red-600 mt-2">{{ error }}</div>
+    }
+    <div class="flex flex-col w-full mt-4">
+      <app-button
+        type="submit"
+        variant="success"
+        [disabled]="!this.isValid || verifying"
+      >
+        <p data-select="button-content" class="flex gap-2">
+          @if(verifying){
+          <fa-icon [icon]="faLoading" [classes]="['animate-spin']" />
+          }
+          <span>Verify</span>
+        </p>
+      </app-button>
+    </div>
+  </form>
+</div>

@@ -76,7 +76,7 @@ export class LoginComponent {
       label: 'Sign in with Google',
       action: () =>
         this.authService.signInWithGoogle(
-          this.queryParams()['redirectTo'] ?? '/dashboard'
+          this.queryParams()['redirectTo'] ?? '/studio'
         ),
     },
     {
@@ -85,7 +85,7 @@ export class LoginComponent {
       label: 'Sign in with Facebook',
       action: () =>
         this.authService.signInWithFacebook(
-          this.queryParams()['redirectTo'] ?? '/dashboard'
+          this.queryParams()['redirectTo'] ?? '/studio'
         ),
     },
     {
@@ -136,7 +136,7 @@ export class LoginComponent {
       const user = this.userService.user();
       if (user !== null) {
         this.router.navigateByUrl(
-          this.queryParams()['redirectTo'] ?? '/dashboard'
+          this.queryParams()['redirectTo'] ?? '/studio'
         );
       }
     });
@@ -159,7 +159,7 @@ export class LoginComponent {
     const loginResponse = await this.authService.login(
       email,
       password,
-      this.queryParams()['redirectTo'] ?? '/dashboard'
+      this.queryParams()['redirectTo'] ?? '/studio'
     );
     loginResponse.subscribe({
       complete: () => {
@@ -175,10 +175,10 @@ export class LoginComponent {
     this.loginLoading.set(true);
     await (type === 'GOOGLE'
       ? this.authService.signInWithGoogle(
-          this.queryParams()['redirectTo'] ?? '/dashboard'
+          this.queryParams()['redirectTo'] ?? '/studio'
         )
       : this.authService.signInWithFacebook(
-          this.queryParams()['redirectTo'] ?? '/dashboard'
+          this.queryParams()['redirectTo'] ?? '/studio'
         ));
   }
 
@@ -189,7 +189,7 @@ export class LoginComponent {
     const loginResponse = await this.authService.magicLogin(
       email,
       null,
-      this.queryParams()['redirectTo'] ?? '/dashboard'
+      this.queryParams()['redirectTo'] ?? '/studio'
     );
     loginResponse.subscribe({
       next: () => {

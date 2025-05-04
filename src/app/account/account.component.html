@@ -18,6 +18,9 @@
           }@else{
           <fa-icon [icon]="faVerified" class="text-success"></fa-icon>}
         </span>
+        @if(!user()?.emailVerified){
+        <a href="/verify-email" class="ml-4">Verify Email</a>
+        }
       </p>
     </div>
   </div>
@@ -27,7 +30,7 @@
     }}
   </p>
   <div
-    class="flex flex-col md:grid md:grid-cols-3 gap-3 mt-6 pt-4 border-t border-primary-dark"
+    class="flex flex-col md:grid md:grid-cols-3 gap-3 mt-6 pt-4 border-t border-primary-dark/50"
   >
     <app-button variant="primary" (click)="openAccountUpdateDialog()">
       <span data-select="button-content" class="flex gap-4 w-full">
@@ -62,8 +65,8 @@
         [classList]="'cursor-pointer flex-shrink-0'"
       ></app-avatar>
       <p>
-        Click on the avatar to upload an image (Max Size: 2MB) or provide an
-        image URL below.
+        Click on the avatar to upload an image (Max Size: 2MB) or provide a URL
+        below.
       </p>
     </div>
     <input
@@ -77,7 +80,7 @@
       <div class="w-full">
         <app-input-group
           type="url"
-          label="Replace Avatar by URL"
+          label="Avatar URL"
           placeholder="https://example.com/profile_pic.png"
           name="avatar"
           [hint]="avatarHint"
@@ -96,7 +99,7 @@
 
     <app-input-group
       type="text"
-      label="Your Name"
+      label="Name"
       placeholder="John Doe"
       name="displayName"
       [value]="updatedAccount().displayName ?? ''"
@@ -114,7 +117,7 @@
       [hint]="aboutHint"
       [variant]="aboutVariant"
     />
-    <div class="flex gap-2 border-t border-primary-dark pt-4">
+    <div class="flex gap-2 border-t border-primary-dark/50 pt-4">
       <div class="w-1/2 flex flex-col">
         <app-button
           (click)="closeAccountUpdateDialog()"
@@ -153,7 +156,7 @@
 <dialog #accountDeleteDialog>
   <div class="flex flex-col gap-4 p-4 max-w-md">
     <h5>Delete Account</h5>
-    <hr class="border-primary-dark" />
+    <hr />
     <p>
       Once you delete your account, you won't be able to log in again. Are you
       sure you want to proceed?
@@ -162,7 +165,7 @@
       <p>All your blogs will be deleted too.</p>
       <p>Your account can not be restored after 30 days of deletion.</p>
     </div>
-    <hr class="border-primary-dark" />
+    <hr />
     <div class="flex justify-between">
       <app-button
         variant="primary"

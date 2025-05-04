@@ -35,7 +35,7 @@ export class MagicLoginComponent {
           this.statusMessage = 'Token is missing ...';
           return;
         }
-        const redirectTo = this.queryParams()['redirectTo'] ?? '/dashboard';
+        const redirectTo = this.queryParams()['redirectTo'] ?? '/studio';
 
         this.verifying = true;
         this.authService

@@ -20,6 +20,10 @@ a:focus {
   @apply text-primary;
 }
 
+hr {
+  @apply border-primary-dark/50;
+}
+
 h6 {
   @apply text-lg;
 }

@@ -18,7 +18,7 @@ export class HeaderComponent {
   routes = computed(() => [
     {
       href: '/',
-      label: 'Home',
+      label: 'Blogs',
       exact: true,
     },
     ...(this.userService.user() === null
@@ -31,8 +31,8 @@ export class HeaderComponent {
         ]
       : [
           {
-            href: '/dashboard',
-            label: 'Dashboard',
+            href: '/studio',
+            label: 'Studio',
             exact: true,
           },
           {

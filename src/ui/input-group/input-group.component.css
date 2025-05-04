@@ -3,6 +3,7 @@
 }
 
 .input-group-label {
+  @apply font-semibold;
 }
 
 .input-group-input {

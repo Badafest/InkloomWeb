@@ -66,8 +66,7 @@ export class AuthService extends ApiService {
           const notificationId = this.notifications.addNotification(
             'Magic Login Failed',
             message,
-            'danger',
-            5000
+            'danger'
           );
           this._notificationIds.push(notificationId);
         },
@@ -158,8 +157,7 @@ export class AuthService extends ApiService {
         const notificationId = this.notifications.addNotification(
           'Login Failed',
           message,
-          'danger',
-          5000
+          'danger'
         );
         this._notificationIds.push(notificationId);
       },
@@ -181,6 +179,32 @@ export class AuthService extends ApiService {
     return registerResponse;
   }
 
+  public async forgotPassword(email: string) {
+    const forgotResponse = await this.post<any>('auth/forgot-password', {
+      body: { email },
+      skipAuthorization: true,
+    });
+    forgotResponse.subscribe({
+      next: () => {
+        this.notifications.addNotification(
+          'Check Your Inbox',
+          'If the email address is correct, you should receive an OTP in your inbox to change your password.'
+        );
+      },
+      error: (error) => {
+        const message =
+          error.error?.message ?? error.message ?? error.toString();
+        const notificationId = this.notifications.addNotification(
+          'OTP Request Failed',
+          message,
+          'danger'
+        );
+        this._notificationIds.push(notificationId);
+      },
+    });
+    return forgotResponse;
+  }
+
   private handleRegisterResponse(
     registerResponse: Observable<{ data: User }>,
     redirectTo: string = '/login'
@@ -198,8 +222,7 @@ export class AuthService extends ApiService {
         const notificationId = this.notifications.addNotification(
           'Register Failed',
           message,
-          'danger',
-          5000
+          'danger'
         );
         this._notificationIds.push(notificationId);
       },

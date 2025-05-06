@@ -7,6 +7,9 @@ export type User = {
   emailVerified: boolean;
   profileComplete: boolean;
   authTypes: AuthType[];
+  following: number;
+  followers: number;
+  blogs: number;
   displayName?: string;
   avatar?: string;
   avatarImage?: File;

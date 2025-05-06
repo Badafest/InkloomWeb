@@ -12,11 +12,11 @@
 
 .input-group-input input,
 .input-group-input textarea {
-  @apply border-none py-3 outline-none flex-grow max-h-60 min-h-10;
+  @apply border-none py-3 outline-none flex-grow max-h-64 min-h-12;
 }
 
 .input-group-input textarea {
-  @apply h-20;
+  @apply h-48;
 }
 
 .input-group-input * {

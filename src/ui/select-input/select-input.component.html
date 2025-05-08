@@ -1,0 +1,33 @@
+<!-- ng-select wrapper using input-group styles -->
+<div class="input-group">
+  @if(label.length>0){
+  <label class="input-group-label">{{ label }}</label>
+  }
+  <ng-select
+    [id]="id"
+    [name]="name"
+    [items]="options"
+    bindLabel="label"
+    bindValue="id"
+    [compareWith]="compareFn"
+    [multiple]="multiple"
+    [clearable]="clearable"
+    [loading]="loading"
+    [placeholder]="selected.length === 0 ? placeholder : ''"
+    [(ngModel)]="selected"
+    (change)="onChange($event)"
+    (search)="onSearch($event)"
+    class="input-group-input"
+    [virtualScroll]="true"
+    [closeOnSelect]="!multiple"
+    [searchable]="true"
+    [hideSelected]="multiple"
+  >
+    <ng-template ng-label-tmp let-item="item">
+      {{ item.label }}
+    </ng-template>
+    <ng-template ng-option-tmp let-item="item">
+      {{ item.label }}
+    </ng-template>
+  </ng-select>
+</div>

@@ -2,6 +2,7 @@ import { CommonModule } from '@angular/common';
 import { Component, forwardRef, Input } from '@angular/core';
 import { TVariant } from '../types';
 import { NG_VALUE_ACCESSOR, ControlValueAccessor } from '@angular/forms';
+import { v4 as randomUUID } from 'uuid';
 
 @Component({
   selector: 'app-input-group',
@@ -41,14 +42,36 @@ export class InputGroupComponent implements ControlValueAccessor {
   @Input() value: string = '';
   @Input() onChange: EventListener = () => {};
   @Input() disabled: boolean = false;
-  @Input() id = 'randomId';
+  @Input() id = randomUUID();
   @Input() name = 'input';
   @Input() formControlName: string = this.name;
-  @Input() label = this.name || 'Label';
+  @Input() label = '';
   @Input() type = 'text';
   @Input() placeholder = this.name || 'placeholder';
   @Input() hint = '';
-  @Input() color = 'red-500';
-  @Input() background = 'white';
   @Input() variant: TVariant = 'primary';
+
+  rows = 1;
+  onChangeForTextArea: EventListener = (event) => {
+    this.updateRows(event);
+    this.onChange(event);
+  };
+
+  updateRows: EventListener = (event) => {
+    const target = event.target as HTMLTextAreaElement;
+
+    const style = window.getComputedStyle(target);
+    const lineHeight = parseFloat(style.lineHeight || '16');
+    const paddingTop = parseFloat(style.paddingTop || '0');
+    const paddingBottom = parseFloat(style.paddingBottom || '0');
+    const borderTop = parseFloat(style.borderTopWidth || '0');
+    const borderBottom = parseFloat(style.borderBottomWidth || '0');
+    const totalVertical = paddingTop + paddingBottom + borderTop + borderBottom;
+
+    // scrollHeight includes padding but not borders, so we add borders
+    const contentHeight = target.scrollHeight + borderTop + borderBottom;
+    const rows = Math.round((contentHeight - totalVertical) / lineHeight);
+
+    this.rows = Math.max(1, rows);
+  };
 }

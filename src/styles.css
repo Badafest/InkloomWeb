@@ -1,10 +1,39 @@
+/* Import Inter font from Google Fonts */
+@import url("https://fonts.googleapis.com/css2?family=Inter:wght@400;700&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500;600;700&display=swap");
+
 /* You can add global styles to this file, and also import other style files */
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
+:root {
+  --primary-dark: #023047;
+  --primary: #219ebc;
+  --primary-light: #8ecae6;
+  --secondary: #fb8500;
+  --secondary-light: #ffb703;
+  --success: #386641;
+  --danger: #bc4749;
+  --white: #fffffc;
+  --gray: #39444a;
+  --black: #01161e;
+}
+
 * {
-  @apply text-inherit bg-transparent;
+  font-family: "Inter", ui-serif, serif;
+}
+
+code,
+pre,
+.font-mono {
+  font-family: "Fira Code", ui-monospace, SFMono-Regular, Menlo, Monaco,
+    Consolas, "Liberation Mono", "Courier New", monospace;
+}
+
+* {
+  @apply text-inherit bg-transparent break-words transition-all;
+  font-family: inherit;
 }
 
 *:disabled {
@@ -21,7 +50,7 @@ a:focus {
 }
 
 hr {
-  @apply border-primary-dark/50;
+  @apply border-primary-dark-50;
 }
 
 h6 {
@@ -49,5 +78,13 @@ h1 {
 }
 
 dialog {
-  @apply backdrop:bg-black/65 bg-white border-primary-dark p-6 rounded-md w-max shadow-md;
+  @apply backdrop:bg-black backdrop:opacity-65 bg-white border-primary-dark p-6 rounded-md w-max shadow-md;
+}
+
+.select-selected {
+  @apply flex gap-2 items-center my-2 flex-wrap capitalize;
+}
+
+.select-selected-item {
+  @apply bg-primary text-white text-sm font-semibold px-2 py-1 rounded;
 }

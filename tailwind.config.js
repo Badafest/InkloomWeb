@@ -6,16 +6,22 @@ module.exports = {
   theme: {
     extend: {
       colors: {
-        "primary-dark": "#023047",
-        primary: "#219ebc",
-        "primary-light": "#8ecae6",
-        secondary: "#fb8500",
-        "secondary-light": "#ffb703",
-        success: "#386641",
-        danger: "#bc4749",
-        white: "#fffffc",
-        black: "#01161e",
-      }
+        "primary-dark": "var(--primary-dark)",
+        "primary-dark-50": "var(--primary-dark)-50",
+        primary: "var(--primary)",
+        "primary-light": "var(--primary-light)",
+        secondary: "var(--secondary)",
+        "secondary-light": "var(--secondary-light)",
+        success: "var(--success)",
+        danger: "var(--danger)",
+        white: "var(--white)",
+        gray: "var(--gray)",
+        black: "var(--black)",
+      },
+      fontFamily: {
+        sans: ["'Inter'", 'ui-serif', 'serif'],
+        mono: ["'Fira Code'", 'ui-monospace', 'SFMono-Regular', 'Menlo', 'Monaco', 'Consolas', 'Liberation Mono', 'Courier New', 'monospace'],
+      },
     },
   },
   plugins: [],

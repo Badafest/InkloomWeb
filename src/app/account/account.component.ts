@@ -1,5 +1,6 @@
 import {
   Component,
+  computed,
   effect,
   ElementRef,
   signal,
@@ -21,6 +22,7 @@ import {
 } from '@fortawesome/free-solid-svg-icons';
 import { FaIconComponent } from '@fortawesome/angular-fontawesome';
 import { TVariant } from '../../ui/types';
+import { ImageInputComponent } from '../../ui/image-input/image-input.component';
 
 @Component({
   standalone: true,
@@ -32,6 +34,7 @@ import { TVariant } from '../../ui/types';
     FaIconComponent,
     InputGroupComponent,
     ButtonComponent,
+    ImageInputComponent,
   ],
 })
 export class AccountComponent {
@@ -39,13 +42,11 @@ export class AccountComponent {
   isEditing = false;
 
   updatedAccount = signal<Partial<User>>({});
-  avatarImageUrl = '';
+
+  avatarImageUrl = computed(() => this.updatedAccount().avatar ?? '');
 
   aboutHint = '';
   aboutVariant: TVariant = 'primary';
-
-  avatarHint = '';
-  avatarVariant: TVariant = 'primary';
 
   nameHint = '';
   nameVariant: TVariant = 'primary';
@@ -53,11 +54,7 @@ export class AccountComponent {
   @ViewChild('accountDeleteDialog')
   accountDeleteDialog!: ElementRef<HTMLDialogElement>;
 
-  @ViewChild('accountUpdateDialog')
-  accountUpdateDialog!: ElementRef<HTMLDialogElement>;
-
-  @ViewChild('avatarImageField')
-  avatarImageField!: ElementRef<HTMLInputElement>;
+  showUpdateView = false;
 
   faWarning = faWarning;
   faLogout = faPowerOff;
@@ -76,7 +73,6 @@ export class AccountComponent {
           displayName: this.user()?.displayName,
           avatarImage: undefined,
         });
-        this.avatarImageUrl = this.user()?.avatar ?? '';
         this.nameVariant =
           (this.user()?.displayName ?? '')?.length > 0 ? 'primary' : 'danger';
       },
@@ -88,51 +84,12 @@ export class AccountComponent {
     this.userService.logout();
   };
 
-  handleAvatarChange: EventListener = (event) => {
-    this.avatarHint = '';
-    this.avatarVariant = 'success';
-    const updatedAvatar = (event.target as HTMLInputElement).value;
-    URL.revokeObjectURL(this.avatarImageUrl);
+  handleAvatarChange = (url: string, file: File | null) => {
     this.updatedAccount.update((prev) => ({
       ...prev,
-      avatar: updatedAvatar,
-      avatarImage: undefined,
+      avatarImage: file ?? undefined,
+      avatar: url,
     }));
-    this.avatarImageUrl = updatedAvatar;
-  };
-
-  handleAvatarImageChange: EventListener = (event) => {
-    const inputFiles = (event.target as HTMLInputElement).files;
-    if (!inputFiles || inputFiles?.length === 0) {
-      return;
-    }
-    const avatarImage = inputFiles[0];
-    if (avatarImage.size > 2 * 1024 * 1024) {
-      this.avatarHint =
-        'Please compress the avatar image or choose another less than 2MB in size';
-      this.avatarVariant = 'danger';
-    } else {
-      this.avatarHint = '';
-      this.avatarVariant = 'success';
-    }
-    URL.revokeObjectURL(this.avatarImageUrl);
-    this.updatedAccount.update((prev) => ({
-      ...prev,
-      avatarImage: inputFiles[0],
-      avatar: '',
-    }));
-    this.avatarImageUrl = URL.createObjectURL(inputFiles[0]);
-  };
-
-  clearAvatar = () => {
-    this.updatedAccount.update((prev) => ({
-      ...prev,
-      avatarImage: undefined,
-      avatar: '',
-    }));
-    this.avatarImageUrl = '';
-    this.avatarHint = '';
-    this.avatarVariant = 'primary';
   };
 
   handleAboutChange: EventListener = (event) => {
@@ -159,12 +116,8 @@ export class AccountComponent {
     this.nameVariant = isValid ? 'success' : 'danger';
   };
 
-  openAccountUpdateDialog = () => {
-    this.accountUpdateDialog.nativeElement.showModal();
-  };
-
-  closeAccountUpdateDialog = () => {
-    this.accountUpdateDialog.nativeElement.close();
+  toggleUpdateView = () => {
+    this.showUpdateView = !this.showUpdateView;
   };
 
   async updateAccount(): Promise<void> {
@@ -178,7 +131,7 @@ export class AccountComponent {
       },
       complete: () => {
         this.isEditing = false;
-        this.closeAccountUpdateDialog();
+        this.showUpdateView = false;
       },
     });
   }

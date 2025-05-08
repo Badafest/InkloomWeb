@@ -1,4 +1,7 @@
-<div class="overflow-y-auto fixed z-30 top-0 right-4 max-h-screen">
+<div
+  class="overflow-y-auto fixed z-50 top-0 right-4 max-h-screen"
+  id="notificationContainer"
+>
   @for (notification of notificationService.notifications; track
   notification.id) {
   <div

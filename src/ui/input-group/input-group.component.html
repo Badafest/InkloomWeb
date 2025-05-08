@@ -1,5 +1,7 @@
 <div class="flex flex-col gap-1 input-group">
+  @if(label.length>0){
   <label [for]="id" class="input-group-label {{ variant }}">{{ label }}</label>
+  }
   <div class="input-group-input {{ variant }}">
     <ng-content select="[data-select=input-group-input-left-icon]"></ng-content>
 
@@ -9,11 +11,11 @@
       [name]="name"
       [placeholder]="placeholder"
       [disabled]="disabled"
-      (input)="onChange($event)"
-      [rows]="5"
+      (input)="onChangeForTextArea($event)"
+      (focus)="updateRows($event)"
+      [rows]="rows"
       >{{ value }}</textarea
     >
-
     } @default {
     <input
       [type]="type"
@@ -30,5 +32,7 @@
       select="[data-select=input-group-input-right-icon]"
     ></ng-content>
   </div>
-  <span class="input-group-hint {{ variant }} whitespace-pre">{{ hint }}</span>
+  <span class="input-group-hint {{ variant }} whitespace-pre-wrap">{{
+    hint
+  }}</span>
 </div>

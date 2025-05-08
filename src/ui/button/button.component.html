@@ -1,3 +1,22 @@
-<button [type]="type" [ngClass]="variant + ' ' + classes" [disabled]="disabled">
-  <ng-content select="[data-select=button-content]" />
-</button>
+<div class="relative">
+  <button
+    [type]="type"
+    [ngClass]="variant + ' ' + classes"
+    [disabled]="disabled"
+    (mouseenter)="showTooltip = true"
+    (mouseleave)="showTooltip = false"
+    [title]="title"
+  >
+    <ng-content select="[data-select=button-content]" />
+  </button>
+
+  @if(showTooltip && tooltip.length>0){
+  <span
+    [class]="
+      'absolute right-1/2 translate-x-1/2 top-full mt-1 text-sm text-nowrap text-center text-' +
+      variant
+    "
+    >{{ tooltip }}</span
+  >
+  }
+</div>

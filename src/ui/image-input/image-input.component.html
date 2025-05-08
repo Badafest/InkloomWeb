@@ -1,0 +1,68 @@
+<div class="border border-primary-dark p-2">
+  <div
+    class="w-full h-60 p-4 mb-2 flex items-center justify-center cursor-pointer rounded-sm border border-primary-dark border-dashed"
+    (click)="imageField.click()"
+  >
+    @if(imageUrl().length > 0){
+    <img
+      [src]="imageUrl()"
+      [classList]="
+        square
+          ? 'h-full object-cover aspect-square'
+          : video
+          ? 'h-full object-cover aspect-video'
+          : 'h-full object-cover'
+      "
+      [alt]="label"
+    />
+    }@else {
+    <span class="text-sm">Click to upload an image</span>
+    }
+  </div>
+  <input
+    #imageField
+    type="file"
+    [name]="name"
+    [accept]="validMimetypes.join(',')"
+    hidden
+    (change)="handleImageChange($event)"
+  />
+  <div class="relative">
+    <app-input-group
+      [label]="label"
+      type="url"
+      placeholder="https://example.com/image.png"
+      [name]="name"
+      [variant]="variant"
+      [value]="
+        imageUrl().startsWith('blob') ? imageFile()?.name ?? '' : imageUrl()
+      "
+      [onChange]="handleUrlChange"
+      [id]="id"
+      [disabled]="imageFile() !== null"
+    />
+    <app-button
+      variant="danger"
+      (click)="clearImage()"
+      [classes]="'icon small pill absolute bottom-2 right-1'"
+      [disabled]="imageFile() === null && imageUrl() === ''"
+    >
+      <span data-select="button-content">
+        <fa-icon [icon]="faRemoveImage"></fa-icon>
+      </span>
+    </app-button>
+  </div>
+  @if(showCaption){
+  <app-input-group
+    [label]="''"
+    type="text"
+    placeholder="caption..."
+    [name]="name"
+    [variant]="variant"
+    [value]="imageCaption()"
+    [onChange]="handleCaptionChange"
+    [disabled]="imageFile() === null && imageUrl() === ''"
+  />
+  }
+  <span [class]="'text-' + variant">{{ hint }}</span>
+</div>

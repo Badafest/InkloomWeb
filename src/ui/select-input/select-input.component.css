@@ -1,0 +1,49 @@
+/* Styles for ng-select selectors */
+
+:host ::ng-deep .ng-select .ng-select-container {
+  padding: 0.5rem 1rem 0.5rem 1rem;
+  border: 1px solid var(--primary-dark);
+  outline: 2px solid transparent;
+  border-radius: 0.125rem;
+  outline-offset: 0px;
+  display: flex;
+  gap: 0.5rem;
+  align-items: center;
+  justify-content: space-between;
+}
+
+:host ::ng-deep .ng-select.ng-select-focused .ng-select-container {
+  outline-color: var(--primary-dark);
+}
+
+:host ::ng-deep .ng-select .ng-select-container .ng-value {
+  color: var(--white);
+  background: var(--primary);
+  text-transform: capitalize;
+  font-weight: 600;
+  font-size: small;
+  padding: 0.25rem 0.75rem;
+  border-radius: 0.25rem;
+  margin: 0.25rem;
+}
+
+:host ::ng-deep .ng-select .ng-dropdown-panel {
+  border: 2px solid var(--primary-dark);
+  border-radius: 0.25rem;
+  background: var(--white);
+}
+
+:host ::ng-deep .ng-select .ng-option {
+  padding: 0.5rem 1rem;
+  cursor: pointer;
+}
+
+:host ::ng-deep .ng-select .ng-option-selected {
+  background: var(--primary);
+  color: var(--gray);
+}
+
+:host ::ng-deep .ng-select .ng-option:hover {
+  background: var(--primary);
+  color: var(--white);
+}

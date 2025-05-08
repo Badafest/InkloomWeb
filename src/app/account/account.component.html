@@ -32,7 +32,7 @@
         <h3>{{ user()?.blogs }}</h3>
         <span class="text-sm">Blogs</span>
       </div>
-      <div class="border-x-2 px-3 broder-x-primary-dark/50">
+      <div class="border-x px-3 border-x-primary-dark/50">
         <h3>{{ user()?.followers }}</h3>
         <span class="text-sm">Followers</span>
       </div>
@@ -95,7 +95,9 @@
       hidden
       (change)="handleAvatarImageChange($event)"
     />
-    <div class="flex w-full justify-between items-end gap-3">
+    <div
+      class="flex flex-col md:flex-row w-full justify-between items-end gap-3"
+    >
       <div class="w-full">
         <app-input-group
           type="url"
@@ -136,8 +138,10 @@
       [hint]="aboutHint"
       [variant]="aboutVariant"
     />
-    <div class="flex gap-2 border-t border-primary-dark/50 pt-4">
-      <div class="w-1/2 flex flex-col">
+    <div
+      class="flex flex-col md:flex-row gap-2 border-t border-primary-dark/50 pt-4"
+    >
+      <div class="md:w-1/2 flex flex-col">
         <app-button
           (click)="closeAccountUpdateDialog()"
           variant="danger"
@@ -150,7 +154,7 @@
           >
         </app-button>
       </div>
-      <div class="w-1/2 flex flex-col">
+      <div class="md:w-1/2 flex flex-col">
         <app-button
           [type]="'submit'"
           (click)="updateAccount()"

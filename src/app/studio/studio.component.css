@@ -1,0 +1,7 @@
+.editor-toolbar-container {
+  @apply flex items-end gap-2;
+}
+
+.code-block {
+  @apply bg-primary-dark text-white rounded px-4 py-2 my-2 font-mono block whitespace-pre-wrap;
+}

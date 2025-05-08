@@ -14,8 +14,13 @@ module.exports = {
         success: "#386641",
         danger: "#bc4749",
         white: "#fffffc",
+        gray: "#39444a",
         black: "#01161e",
-      }
+      },
+      fontFamily: {
+        sans: ["'Inter'", 'ui-serif', 'serif'],
+        mono: ["'Fira Code'", 'ui-monospace', 'SFMono-Regular', 'Menlo', 'Monaco', 'Consolas', 'Liberation Mono', 'Courier New', 'monospace'],
+      },
     },
   },
   plugins: [],

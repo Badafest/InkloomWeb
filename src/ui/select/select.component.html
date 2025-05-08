@@ -1,0 +1,37 @@
+<div class="select-container relative">
+  <app-input-group
+    type="text"
+    [(ngModel)]="search"
+    (ngModelChange)="onSearchChange()"
+    [placeholder]="placeholder"
+    class="select-search"
+    [label]="label"
+    variant="primary"
+  ></app-input-group>
+  @if(loading){
+  <div>Loading...</div>
+  } @if(showOptions && options.length){
+  <div
+    class="absolute z-30 select-options w-full max-h-60 overflow-y-auto border-2 border-primary-dark rounded-sm bg-white"
+  >
+    @for(option of options; track option){
+    <div
+      (click)="onSelect(option)"
+      [class.selected]="isSelected(option)"
+      class="select-option border-b border-primary-dark px-3 py-2 cursor-pointer hover:bg-primary-light"
+    >
+      {{ option.label }}
+    </div>
+    }
+  </div>
+  } @if(selected.length){
+  <div class="select-selected">
+    @for (s of selected; track $index) {
+    <span class="select-selected-item flex gap-2 items-center w-max">
+      {{ s.label }}
+      <button type="button" (click)="onRemove(s)">&times;</button>
+    </span>
+    }
+  </div>
+  }
+</div>

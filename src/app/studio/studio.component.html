@@ -1,1 +1,265 @@
-<p>studio works!</p>
+<!-- Blog Editor UI -->
+<div class="blog-editor max-w-[500px] lg:max-w-screen-md mx-auto">
+  <!-- Top Block: Title, Subtitle, Tags -->
+  <div class="editor-meta-block mb-6 w-full flex flex-col gap-2">
+    <div class="flex gap-2">
+      <div class="w-full">
+        @if(currentEditing === 'Title'){
+        <app-input-group
+          [(ngModel)]="title"
+          name="title"
+          placeholder="Title"
+          variant="primary"
+          type="textarea"
+          class="text-xl md:text-3xl font-semibold"
+        ></app-input-group>
+        }@else{
+        <h3 (click)="setEditing('Title')" class="cursor-pointer">
+          {{ title.trim().length > 0 ? title.trim() : "Title" }}
+        </h3>
+        }
+      </div>
+      @if(currentEditing === 'Title'){
+      <app-button classes="icon outline pill small" (click)="setEditing('')">
+        <fa-icon [icon]="faOk" data-select="button-content"></fa-icon>
+      </app-button>
+      }
+    </div>
+
+    <div class="flex gap-2">
+      <div class="w-full text-gray">
+        @if(currentEditing === 'Subtitle'){
+        <app-input-group
+          [(ngModel)]="subtitle"
+          name="subtitle"
+          placeholder="Subtitle"
+          variant="primary"
+          type="textarea"
+          class="text-xl"
+        ></app-input-group>
+        }@else{
+        <h5 (click)="setEditing('Subtitle')" class="cursor-pointer">
+          {{ subtitle.trim().length > 0 ? subtitle.trim() : "Subtitle" }}
+        </h5>
+        }
+      </div>
+      @if(currentEditing === 'Subtitle'){
+      <app-button classes="icon outline pill small" (click)="setEditing('')">
+        <fa-icon [icon]="faOk" data-select="button-content"></fa-icon>
+      </app-button>
+      }
+    </div>
+
+    <!-- Author, Published Time and Reading Time -->
+    <div class="flex items-center text-sm text-gray mt-4 mb-6">
+      <span>Published By {{ author }} on {{ publishedDate }}</span>
+    </div>
+
+    <div class="flex gap-2">
+      <div class="w-full">
+        @if(currentEditing === 'HeaderImage'){
+        <app-image-input
+          [defaultImageUrl]="headerImageUrl"
+          name="headerImage"
+          [id]="'headerImage'"
+          [onImageChange]="handleHeaderImageChange"
+        ></app-image-input>
+        }@else{ @if(headerImageUrl){
+        <img
+          class="object-cover aspect-video cursor-pointer rounded"
+          [src]="headerImageUrl"
+          [alt]="title"
+          (click)="setEditing('HeaderImage')"
+        />
+        }@else {
+        <span (click)="setEditing('HeaderImage')" class="cursor-pointer italic"
+          >No Header Image</span
+        >
+        }}
+      </div>
+      @if(currentEditing === 'HeaderImage'){
+      <app-button classes="icon outline pill small" (click)="setEditing('')">
+        <fa-icon [icon]="faOk" data-select="button-content"></fa-icon>
+      </app-button>
+      }
+    </div>
+
+    <div class="flex gap-2 my-3">
+      <div class="w-full">
+        @if(currentEditing === 'Tags'){
+        <app-select
+          [placeholder]="'Add tags'"
+          [multiple]="true"
+          [loadOptions]="loadTagOptions.bind(this)"
+          labelKey="name"
+          valueKey="id"
+          [(selected)]="tags"
+        ></app-select>
+        }@else{ @if(tags.length === 0){
+        <span (click)="setEditing('Tags')" class="cursor-pointer italic"
+          >No Tag Selected</span
+        >}@else{
+        <div class="select-selected md:justify-end">
+          @for (t of tags; track $index) {
+          <span
+            class="select-selected-item cursor-pointer"
+            (click)="setEditing('Tags')"
+          >
+            {{ t.label }}
+          </span>
+          }
+        </div>
+        } }
+      </div>
+      @if(currentEditing === 'Tags'){
+      <app-button classes="icon outline pill small" (click)="setEditing('')">
+        <fa-icon
+          [icon]="faOk"
+          data-select="button-content"
+        ></fa-icon> </app-button
+      >}
+    </div>
+  </div>
+
+  <hr />
+
+  <!-- Editor Content Blocks -->
+  <div class="editor-blocks mb-2 flex flex-col gap-4 mt-4">
+    @for (block of blocks; track block.id) {
+    <div class="flex gap-2">
+      <div class="w-full">
+        @switch (block.type) { @case ('heading') { @if(currentEditing ===
+        block.id){
+        <app-input-group
+          [(ngModel)]="block.content"
+          name="heading"
+          [id]="block.id"
+          placeholder="Heading"
+          variant="primary"
+          type="textarea"
+          class="text-xl md:text-2xl font-semibold"
+        ></app-input-group>
+        }@else{
+        <h4 (click)="setEditing(block.id)" class="cursor-pointer">
+          {{ block.content || "Heading" }}
+        </h4>
+        } } @case ('subheading') { @if(currentEditing === block.id){
+        <app-input-group
+          [(ngModel)]="block.content"
+          name="subheading"
+          [id]="block.id"
+          placeholder="Subheading"
+          variant="primary"
+          type="textarea"
+          class="text-xl"
+        ></app-input-group>
+        }@else{
+        <h5 (click)="setEditing(block.id)" class="cursor-pointer">
+          {{ block.content || "Sub-Heading" }}
+        </h5>
+        } } @case ('rich-text') { @if(currentEditing === block.id){
+        <app-input-group
+          [(ngModel)]="block.content"
+          name="rich-text"
+          [id]="block.id"
+          placeholder="Write something..."
+          variant="primary"
+          type="textarea"
+          class="w-full min-h-32 bg-white"
+        ></app-input-group>
+        }@else{
+        <p (click)="setEditing(block.id)" class="cursor-pointer">
+          {{ block.content || "Write something..." }}
+        </p>
+        } } @case ('code') { @if(currentEditing === block.id){
+        <app-input-group
+          [(ngModel)]="block.content"
+          name="code"
+          [id]="block.id"
+          placeholder="Code block"
+          variant="primary"
+          type="textarea"
+        ></app-input-group>
+        }@else{
+        <!-- prettier-ignore -->
+        <code (click)="setEditing(block.id)" class="cursor-pointer code-block">{{block.content || "Code block"}}</code>
+        } } @case ('image') { @if(currentEditing === block.id){
+        <app-image-input
+          [defaultImageUrl]="block.content.url"
+          [defaultImageCaption]="block.content.caption"
+          [showCaption]="true"
+          name="image"
+          [id]="block.id"
+          [onImageChange]="handleImageChange(block.id)"
+          [onCaptionChange]="handleCaptionChange(block.id)"
+        ></app-image-input>
+        }@else{ @if(block.content){
+        <div class="w-full flex flex-col gap-2 my-2">
+          <img
+            class="object-cover max-w-full cursor-pointer"
+            [src]="block.content.url"
+            [alt]="block.content.caption"
+            (click)="setEditing(block.id)"
+          />
+          <span class="text-center text-sm">{{ block.content.caption }}</span>
+        </div>
+        }@else {
+        <span (click)="setEditing(block.id)" class="cursor-pointer italic"
+          >No Image</span
+        >
+        } } } }
+      </div>
+      @if(currentEditing === block.id){
+      <div class="flex flex-col gap-2">
+        <app-button classes="icon outline pill small" (click)="setEditing('')">
+          <fa-icon [icon]="faOk" data-select="button-content"></fa-icon>
+        </app-button>
+        <app-button
+          (click)="removeBlock(block.id)"
+          [classes]="'icon outline pill small'"
+          variant="danger"
+        >
+          <fa-icon [icon]="faTrash" data-select="button-content"></fa-icon>
+        </app-button>
+      </div>
+      }
+    </div>
+    }
+  </div>
+
+  <!-- Collapsible Editor Toolbar at the Bottom -->
+  <div class="editor-toolbar-container flex justify-end mt-4">
+    @if(showToolbar) {
+    <div class="editor-toolbar flex gap-2">
+      <app-button classes="icon outline" (click)="addBlock('heading')">
+        <fa-icon data-select="button-content" [icon]="faHeading"></fa-icon>
+      </app-button>
+      <app-button classes="icon outline" (click)="addBlock('subheading')">
+        <fa-icon
+          data-select="button-content"
+          [icon]="faSubheading"
+          [classes]="['text-sm']"
+        ></fa-icon>
+      </app-button>
+      <app-button classes="icon outline" (click)="addBlock('rich-text')">
+        <fa-icon data-select="button-content" [icon]="faRichText"></fa-icon>
+      </app-button>
+      <app-button classes="icon outline" (click)="addBlock('code')">
+        <fa-icon data-select="button-content" [icon]="faCode"></fa-icon>
+      </app-button>
+      <app-button classes="icon outline" (click)="addBlock('image')">
+        <fa-icon data-select="button-content" [icon]="faImage"></fa-icon>
+      </app-button>
+    </div>
+    }
+    <app-button
+      classes="toolbar-toggle icon pill"
+      (click)="showToolbar = !showToolbar"
+    >
+      <fa-icon
+        data-select="button-content"
+        [icon]="showToolbar ? faHide : faShow"
+      ></fa-icon>
+    </app-button>
+  </div>
+</div>

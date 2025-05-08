@@ -2,6 +2,7 @@ import { CommonModule } from '@angular/common';
 import { Component, forwardRef, Input } from '@angular/core';
 import { TVariant } from '../types';
 import { NG_VALUE_ACCESSOR, ControlValueAccessor } from '@angular/forms';
+import { v4 as randomUUID } from 'uuid';
 
 @Component({
   selector: 'app-input-group',
@@ -41,14 +42,12 @@ export class InputGroupComponent implements ControlValueAccessor {
   @Input() value: string = '';
   @Input() onChange: EventListener = () => {};
   @Input() disabled: boolean = false;
-  @Input() id = 'randomId';
+  @Input() id = randomUUID();
   @Input() name = 'input';
   @Input() formControlName: string = this.name;
-  @Input() label = this.name || 'Label';
+  @Input() label = '';
   @Input() type = 'text';
   @Input() placeholder = this.name || 'placeholder';
   @Input() hint = '';
-  @Input() color = 'red-500';
-  @Input() background = 'white';
   @Input() variant: TVariant = 'primary';
 }

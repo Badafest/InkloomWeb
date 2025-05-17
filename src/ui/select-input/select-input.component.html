@@ -16,7 +16,7 @@
     [placeholder]="selected.length === 0 ? placeholder : ''"
     [(ngModel)]="selected"
     (change)="onChange($event)"
-    (search)="onSearch($event)"
+    [typeahead]="searchInput$"
     class="input-group-input"
     [virtualScroll]="true"
     [closeOnSelect]="!multiple"

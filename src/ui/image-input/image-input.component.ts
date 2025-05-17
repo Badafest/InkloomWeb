@@ -39,7 +39,7 @@ export class ImageInputComponent {
   @Input() video = false;
 
   @Input() showCaption = false;
-  @Input() hint = 'Select an image or enter a URL';
+  @Input() hint = '';
   @Input() variant: TVariant = 'primary';
   @Input() label = '';
   @Input() name = 'image';

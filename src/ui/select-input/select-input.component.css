@@ -8,7 +8,7 @@
   outline-offset: 0px;
   display: flex;
   gap: 0.5rem;
-  align-items: center;
+  align-items: start;
   justify-content: space-between;
 }
 
@@ -16,8 +16,14 @@
   outline-color: var(--primary-dark);
 }
 
+:host ::ng-deep .ng-select .ng-select-container .ng-clear-wrapper .ng-clear {
+  color: var(--danger) !important;
+  font-size: 2rem;
+  /* margin-top: 0.125rem; */
+}
+
 :host ::ng-deep .ng-select .ng-select-container .ng-value {
-  color: var(--white);
+  color: var(--white) !important;
   background: var(--primary);
   text-transform: capitalize;
   font-weight: 600;
@@ -25,6 +31,7 @@
   padding: 0.25rem 0.75rem;
   border-radius: 0.25rem;
   margin: 0.25rem;
+  min-height: max-content;
 }
 
 :host ::ng-deep .ng-select .ng-dropdown-panel {
@@ -45,5 +52,5 @@
 
 :host ::ng-deep .ng-select .ng-option:hover {
   background: var(--primary);
-  color: var(--white);
+  color: var(--white) !important;
 }

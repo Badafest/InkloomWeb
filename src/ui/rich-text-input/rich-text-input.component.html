@@ -1,0 +1,15 @@
+<div class="input-group" [attr.data-variant]="variant">
+  <label [for]="id" *ngIf="label">{{ label }}</label>
+  <div class="editor-container">
+    <angular-editor
+      [id]="id"
+      [name]="name"
+      [(ngModel)]="value"
+      [config]="editorConfig"
+      [placeholder]="placeholder"
+      (ngModelChange)="onContentChange($event)"
+      [attr.disabled]="disabled ? '' : null"
+    ></angular-editor>
+  </div>
+  <small class="hint" *ngIf="hint">{{ hint }}</small>
+</div>

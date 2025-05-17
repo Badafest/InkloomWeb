@@ -1,0 +1,74 @@
+:host {
+  display: block;
+  width: 100%;
+}
+
+.input-group {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  width: 100%;
+}
+
+.editor-container {
+  width: 100%;
+}
+
+::ng-deep .angular-editor-textarea,
+::ng-deep .angular-editor-textarea * {
+  font-family: inherit !important;
+}
+
+::ng-deep .angular-editor {
+  border-radius: 0.25rem;
+  overflow: hidden;
+}
+
+::ng-deep .angular-editor-toolbar {
+  border-bottom: 1px solid var(--primary-dark);
+  background-color: var(--white) !important;
+}
+
+/* Prevent resizing */
+::ng-deep .angular-editor-textarea {
+  resize: none !important;
+  padding: 1rem;
+  min-height: 48px;
+  color: var(--text);
+  border: 1px solid var(--primary-dark);
+  border-radius: 0.25rem;
+  transition: height 0.2s ease-in-out;
+  overflow-y: hidden !important;
+}
+
+::ng-deep .angular-editor-textarea::-webkit-resizer {
+  display: none;
+}
+
+.hint {
+  color: var(--color-text-muted);
+  font-size: 0.875rem;
+}
+
+/* Variants */
+.input-group[data-variant="primary"] ::ng-deep .angular-editor {
+  border-color: var(--primary-dark);
+}
+
+.input-group[data-variant="error"] ::ng-deep .angular-editor {
+  border-color: var(--danger);
+}
+
+.input-group[data-variant="success"] ::ng-deep .angular-editor {
+  border-color: var(--success);
+}
+
+/* Disabled state */
+::ng-deep .angular-editor[disabled] {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+::ng-deep .angular-editor[disabled] .angular-editor-textarea {
+  background-color: var(--color-surface-muted);
+}

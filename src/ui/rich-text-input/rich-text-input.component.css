@@ -1,0 +1,68 @@
+::ng-deep .NgxEditor {
+  border-radius: 0.25rem;
+  border: 1px solid var(--primary-dark);
+  overflow: hidden;
+}
+
+::ng-deep .NgxEditor__MenuBar {
+  border-bottom: 1px solid var(--primary-dark);
+  background-color: var(--white) !important;
+  padding: 0.5rem;
+}
+
+::ng-deep .NgxEditor__Content {
+  min-height: 48px;
+  padding: 1rem;
+  color: var(--text);
+  transition: height 0.2s ease-in-out;
+  overflow-y: auto !important;
+  font-family: inherit !important;
+}
+
+:host ::ng-deep .ql-container {
+  min-height: 120px;
+  border-radius: 0 0 0.125rem 0.125rem;
+  border: 1px solid var(--primary-dark);
+  font-family: inherit;
+  font-size: inherit !important;
+}
+
+:host ::ng-deep .ql-toolbar {
+  border-radius: 0.125rem 0.125rem 0 0;
+  border: 1px solid var(--primary-dark);
+  border-bottom: none;
+  background: var(--white);
+}
+
+:host ::ng-deep .focussed .ql-container,
+:host ::ng-deep .focussed .ql-toolbar {
+  border-width: 3px;
+}
+
+:host ::ng-deep .ql-container.ql-disabled {
+  background: var(--color-surface-muted);
+  opacity: 0.5;
+}
+
+/* Variants */
+.input-group[data-variant="primary"] ::ng-deep .NgxEditor {
+  border-color: var(--primary-dark);
+}
+
+.input-group[data-variant="error"] ::ng-deep .NgxEditor {
+  border-color: var(--danger);
+}
+
+.input-group[data-variant="success"] ::ng-deep .NgxEditor {
+  border-color: var(--success);
+}
+
+/* Disabled state */
+::ng-deep .NgxEditor[disabled] {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+::ng-deep .NgxEditor[disabled] .NgxEditor__Content {
+  background-color: var(--color-surface-muted);
+}

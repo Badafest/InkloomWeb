@@ -3,7 +3,7 @@ import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { environment } from '../../environments/environment';
 import { LoginResponse } from '../models/login-response';
 import { Router } from '@angular/router';
-import { Observable, shareReplay } from 'rxjs';
+import { Observable, shareReplay, takeUntil, type Subject } from 'rxjs';
 import { Injectable } from '@angular/core';
 import { NotificationService } from './notification.service';
 
@@ -13,6 +13,7 @@ type TRequestOptions = {
   skipJoinUrl?: boolean;
   asPromise?: boolean;
   body?: { [k: string]: any };
+  destroyer?: Subject<void>;
 };
 
 @Injectable()
@@ -104,9 +105,15 @@ export abstract class ApiService {
       requestOptions['body'] = options.body;
     }
 
-    return this.http
+    const response = this.http
       .request<{ data: T }>(method, fullUrl, requestOptions)
       .pipe(shareReplay());
+
+    if (options.destroyer) {
+      response.pipe(takeUntil(options.destroyer));
+    }
+
+    return response;
   }
 
   checkAccessTokens() {

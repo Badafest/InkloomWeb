@@ -1,4 +1,10 @@
-import { Component, inject, PLATFORM_ID } from '@angular/core';
+import {
+  Component,
+  inject,
+  PLATFORM_ID,
+  QueryList,
+  ViewChildren,
+} from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { InputGroupComponent } from '../../ui/input-group/input-group.component';
 import { ButtonComponent } from '../../ui/button/button.component';
@@ -7,18 +13,21 @@ import {
   faAdd,
   faAlignLeft,
   faCheck,
-  faClock,
+  faCheckCircle,
+  faCircle,
   faClose,
   faCloudUpload,
   faCode,
+  faEllipsisH,
   faGlobeAsia,
   faHeading,
   faImage,
   faLock,
+  faPencilAlt,
   faPlus,
+  faQuoteLeftAlt,
   faSave,
   faTrashAlt,
-  faUser,
 } from '@fortawesome/free-solid-svg-icons';
 import { v4 as randomUUID } from 'uuid';
 import { ImageInputComponent } from '../../ui/image-input/image-input.component';
@@ -29,13 +38,18 @@ import {
   TSelectOption,
 } from '../../ui/select-input/select-input.component';
 import { isPlatformBrowser } from '@angular/common';
+import { BlogService } from '../services/blog.service';
+import { map, Observable } from 'rxjs';
+import { RichTextInputComponent } from '../../ui/rich-text-input/rich-text-input.component';
 
 export type TBlockType =
   | 'heading'
   | 'subheading'
   | 'rich-text'
+  | 'blockquote'
   | 'code'
-  | 'image';
+  | 'image'
+  | 'separator';
 
 export interface IBlock {
   id: string;
@@ -53,56 +67,24 @@ export interface IBlock {
     FontAwesomeModule,
     ImageInputComponent,
     SelectInputComponent,
+    RichTextInputComponent,
   ],
   templateUrl: './studio.component.html',
   styleUrl: './studio.component.css',
 })
 export class StudioComponent {
   title = '';
+
   description = '';
-  tags: TSelectOption[] = [].map((tag) => ({
-    id: tag,
-    label: tag,
-    value: tag,
-  }));
-  tagOptions: TSelectOption[] = [
-    'technology',
-    'programming',
-    'design',
-    'productivity',
-    'business',
-    'health',
-    'science',
-    'education',
-    'travel',
-    'food',
-    'lifestyle',
-    'photography',
-    'gaming',
-    'AI',
-    'cybersecurity',
-    'web-development',
-    'data-science',
-    'marketing',
-    'career',
-    'sustainability',
-  ].map((tag) => ({
-    id: tag,
-    label: tag,
-    value: tag,
-  }));
-  blocks: IBlock[] = [
-    {
-      id: randomUUID(),
-      type: 'rich-text',
-      content: '',
-      mode: 'view',
-    },
-  ];
+
+  tags: TSelectOption[] = [];
+
+  blocks: IBlock[] = [];
+
   headerImage: File | null = null;
   headerImageUrl: string = '';
 
-  public: boolean = false;
+  public: boolean = true;
   status: BlogStatus = 'DRAFT';
   author = '';
   publishedDate = '';
@@ -112,14 +94,18 @@ export class StudioComponent {
   faHeading = faHeading;
   faSubheading = faHeading;
   faRichText = faAlignLeft;
+  faBlockQuote = faQuoteLeftAlt;
   faCode = faCode;
   faImage = faImage;
+  faSeparator = faEllipsisH;
+
+  faDisc = faCircle;
+
   faHide = faClose;
   faShow = faAdd;
+
   faOk = faCheck;
   faTrash = faTrashAlt;
-  faUser = faUser;
-  faClock = faClock;
 
   faSave = faSave;
   faPublish = faCloudUpload;
@@ -129,6 +115,12 @@ export class StudioComponent {
 
   faAdd = faPlus;
 
+  statusIcon = {
+    DRAFT: faPencilAlt,
+    ARCHIVED: faTrashAlt,
+    PUBLISHED: faCheckCircle,
+  }[this.status];
+
   titleId = randomUUID();
   descriptionId = randomUUID();
   headerImageId = randomUUID();
@@ -137,7 +129,14 @@ export class StudioComponent {
   currentEditing: string = '';
 
   private readonly platformId = inject(PLATFORM_ID);
-  constructor(protected userService: UserService) {
+
+  @ViewChildren(RichTextInputComponent)
+  richTextInputs!: QueryList<RichTextInputComponent>;
+
+  constructor(
+    protected userService: UserService,
+    protected blogService: BlogService
+  ) {
     this.publishedDate = new Date().toLocaleDateString('en-US', {
       month: 'long',
       day: 'numeric',
@@ -150,15 +149,19 @@ export class StudioComponent {
 
   setEditing(id: string) {
     this.currentEditing = id;
-    // focus the input element inside the group
     setTimeout(() => {
-      const parentElement = document.getElementById(id);
-      if (!parentElement) {
+      // Focus the correct rich text input if present
+      const richText = this.richTextInputs?.find((cmp) => cmp.id === id);
+      if (richText?.quillEditor) {
+        richText.focus();
         return;
       }
+      // fallback: focus input/textarea for other block types
+      const parentElement = document.getElementById(id);
+      if (!parentElement) return;
       parentElement.focus();
-      // also focus the first input element
       parentElement.getElementsByTagName('input')[0]?.focus();
+      parentElement.getElementsByTagName('textarea')[0]?.focus();
     });
   }
 
@@ -205,23 +208,17 @@ export class StudioComponent {
     });
   };
 
-  async loadTagOptions(search: string): Promise<TSelectOption[]> {
-    const searchTrimmed = search.trim().toLowerCase().split(' ').at(-1) || '';
-    // Simulate async search (replace with API call if needed)
-    const filtered = this.tagOptions.filter((tag) =>
-      tag.value.toLowerCase().includes(searchTrimmed)
+  async loadTagOptions(search: string): Promise<Observable<TSelectOption[]>> {
+    const searchTrimmed =
+      search?.trim()?.toLowerCase()?.split(' ')?.at(-1) || '';
+
+    const tagsResponse = (await this.blogService.getTags(searchTrimmed)).pipe(
+      map(({ data }) =>
+        data.map((tag) => ({ id: tag, value: tag, label: tag }))
+      )
     );
-    // If not found, allow creating a new tag
-    if (
-      search &&
-      !filtered.some((tag) => tag.value.toLowerCase() === searchTrimmed)
-    ) {
-      return [
-        ...filtered,
-        { id: searchTrimmed, value: searchTrimmed, label: searchTrimmed },
-      ];
-    }
-    return filtered;
+
+    return tagsResponse;
   }
 
   async saveBlog(isDraft: boolean) {

@@ -90,3 +90,19 @@ button.danger.outline {
 button.outline:hover:not([disabled]) {
   @apply text-white outline-none;
 }
+
+.tooltip-primary {
+  @apply text-primary-dark;
+}
+
+.tooltip-secondary {
+  @apply text-secondary;
+}
+
+.tooltip-success {
+  @apply text-success;
+}
+
+.tooltip-danger {
+  @apply text-danger;
+}

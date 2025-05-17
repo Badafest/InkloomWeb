@@ -41,7 +41,14 @@
                   "maximumError": "4kb"
                 }
               ],
-              "outputHashing": "all"
+              "outputHashing": "all",
+              "assets": [
+                {
+                  "glob": "**/*",
+                  "input": "node_modules/@kolkov/angular-editor/assets/icons",
+                  "output": "assets/ae-icons/"
+                }
+              ]
             },
             "development": {
               "optimization": false,
@@ -51,6 +58,13 @@
                 {
                   "replace": "src/environments/environment.ts",
                   "with": "src/environments/environment.development.ts"
+                }
+              ],
+              "assets": [
+                {
+                  "glob": "**/*",
+                  "input": "node_modules/@kolkov/angular-editor/assets/icons",
+                  "output": "assets/ae-icons/"
                 }
               ]
             }

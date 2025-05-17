@@ -1,8 +1,7 @@
-/* Import Inter font from Google Fonts */
-@import url("https://fonts.googleapis.com/css2?family=Inter:wght@400;700&display=swap");
-@import url("https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500;600;700&display=swap");
-
-/* You can add global styles to this file, and also import other style files */
+@import url("https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:ital,wght@0,100..700;1,100..700&family=Merriweather:ital,opsz,wght@0,18..144,300..900;1,18..144,300..900&family=Roboto:ital,wght@0,100..900;1,100..900&display=swap"); /* You can add global styles to this file, and also import other style files */
+@import "quill/dist/quill.core.css";
+@import "quill/dist/quill.snow.css";
+@import "quill/dist/quill.bubble.css";
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -20,20 +19,49 @@
   --black: #01161e;
 }
 
-* {
-  font-family: "Inter", ui-serif, serif;
+*,
+.font-sans {
+  font-family: "IBM Plex Sans", ui-sans, sans;
+}
+
+ol,
+ul {
+  list-style: revert;
+  margin: 0.5rem 1rem;
+  padding-left: 1rem;
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6,
+.font-heading,
+.font-heading * {
+  font-family: "Roboto", ui-sans, sans;
+}
+
+.font-serif,
+.font-serif * {
+  font-family: "Merriweather", ui-serif, serif;
 }
 
 code,
-pre,
-.font-mono {
+.font-mono,
+.font-mono * {
   font-family: "Fira Code", ui-monospace, SFMono-Regular, Menlo, Monaco,
     Consolas, "Liberation Mono", "Courier New", monospace;
 }
 
-* {
-  @apply text-inherit bg-transparent break-words transition-all;
-  font-family: inherit;
+*:not(svg):not(svg *) {
+  @apply text-black bg-transparent break-words transition-all;
+}
+
+button *,
+.badge *,
+.input-group * {
+  @apply !text-inherit;
 }
 
 *:disabled {
@@ -50,7 +78,7 @@ a:focus {
 }
 
 hr {
-  @apply border-primary-dark-50;
+  @apply border-primary-dark;
 }
 
 h6 {

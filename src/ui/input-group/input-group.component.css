@@ -1,5 +1,6 @@
 .input-group {
   @apply text-left;
+  font-family: inherit;
 }
 
 .input-group-label {
@@ -8,11 +9,13 @@
 
 .input-group-input {
   @apply px-4 rounded-sm outline-none outline-offset-0 flex gap-2 items-center justify-between;
+  font-family: inherit;
 }
 
 .input-group-input input,
 .input-group-input textarea {
-  @apply border-none outline-none flex-grow min-h-10 max-h-64 py-2 resize-none;
+  @apply border-none outline-none flex-grow min-h-10 max-h-[75vh] py-2 resize-none;
+  font-family: inherit;
 }
 
 .input-group-input * {

@@ -1,6 +1,7 @@
 import { map, Observable, Subject } from 'rxjs';
 import { ApiService } from './api.service';
 import { Injectable } from '@angular/core';
+import { Blog } from '../models/blog';
 
 @Injectable({
   providedIn: 'root', // Service is registered in root module and available app-wide
@@ -43,5 +44,67 @@ export class BlogService extends ApiService {
     });
 
     return tagResponse;
+  }
+
+  public async saveBlog(blog: Blog, images: File[]) {
+    const formData = this.jsonToFormData({ ...blog, images });
+
+    const requestOptions = {
+      body: formData,
+      nonJsonContent: true,
+    };
+
+    const blogResponse =
+      blog.id !== 0
+        ? await this.patch<Blog>(`/blog/${blog.id}`, requestOptions)
+        : await this.post<Blog>('/blog', requestOptions);
+
+    blogResponse.subscribe({
+      error: (error) => {
+        this.notifications.addNotification(
+          'Blog Save Failed',
+          error.error?.message ?? error.message ?? error.toString(),
+          'danger'
+        );
+      },
+    });
+
+    return blogResponse;
+  }
+
+  public async getBlog(blogId: number) {
+    const blogResponse = await this.get<Blog>(`/blog/${blogId}`);
+
+    blogResponse.subscribe({
+      error: (error) => {
+        this.notifications.addNotification(
+          'Get Blog Failed',
+          error.error?.message ?? error.message ?? error.toString(),
+          'danger'
+        );
+      },
+    });
+
+    return blogResponse;
+  }
+
+  private jsonToFormData(json: any) {
+    const formData = new FormData();
+
+    for (let key in json) {
+      if (Array.isArray(json[key])) {
+        json[key].forEach((value: any) => {
+          formData.append(
+            key,
+            typeof value === 'object' ? JSON.stringify(value) : value
+          );
+        });
+      } else {
+        // Add simple properties directly to the FormData instance
+        formData.append(key, json[key]);
+      }
+    }
+
+    return formData;
   }
 }

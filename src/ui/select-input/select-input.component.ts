@@ -33,9 +33,10 @@ export class SelectInputComponent implements OnInit {
     search: string
   ) => Promise<Observable<TSelectOption[]>>;
   @Input() selected: TSelectOption[] = [];
+  @Input() maxLength: number | null = null;
   @Output() selectedChange = new EventEmitter<TSelectOption[]>();
 
-  options: TSelectOption[] = [{ id: '0', label: 'No options', value: '' }];
+  options: TSelectOption[] = [];
   loading = false;
 
   searchInput$ = new Subject<string>();

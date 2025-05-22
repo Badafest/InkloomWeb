@@ -24,7 +24,7 @@
 
 :host ::ng-deep .ng-select .ng-select-container .ng-value {
   color: var(--white) !important;
-  background: var(--primary);
+  background: var(--gray);
   text-transform: capitalize;
   font-weight: 600;
   font-size: small;

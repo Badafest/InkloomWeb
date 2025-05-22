@@ -57,16 +57,20 @@ export class ImageInputComponent {
   constructor(private notificationService: NotificationService) {
     effect(
       () => {
-        this.imageUrl.set(
-          typeof this.defaultImageUrl === 'string'
-            ? this.defaultImageUrl
-            : this.defaultImageUrl()
-        );
-        this.imageCaption.set(
-          typeof this.defaultImageCaption === 'string'
-            ? this.defaultImageCaption
-            : this.defaultImageCaption()
-        );
+        if (this.defaultImageUrl) {
+          this.imageUrl.set(
+            typeof this.defaultImageUrl === 'string'
+              ? this.defaultImageUrl
+              : this.defaultImageUrl()
+          );
+        }
+        if (this.defaultImageCaption) {
+          this.imageCaption.set(
+            typeof this.defaultImageCaption === 'string'
+              ? this.defaultImageCaption
+              : this.defaultImageCaption()
+          );
+        }
       },
       { allowSignalWrites: true }
     );

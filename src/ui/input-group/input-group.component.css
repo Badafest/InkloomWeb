@@ -14,7 +14,7 @@
 
 .input-group-input input,
 .input-group-input textarea {
-  @apply border-none outline-none flex-grow min-h-10 max-h-[75vh] py-2 resize-none;
+  @apply border-none outline-none flex-grow min-h-10 py-2 resize-none;
   font-family: inherit;
 }
 

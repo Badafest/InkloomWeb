@@ -2,6 +2,10 @@
 <div class="input-group">
   @if(label.length>0){
   <label class="input-group-label">{{ label }}</label>
+  } @if(maxLength){
+  <p class="text-right w-full text-gray text-sm">
+    {{ selected.length }}/{{ maxLength }} selected
+  </p>
   }
   <ng-select
     [id]="id"
@@ -22,6 +26,7 @@
     [closeOnSelect]="!multiple"
     [searchable]="true"
     [hideSelected]="multiple"
+    [maxSelectedItems]="maxLength ?? 100"
   >
     <ng-template ng-label-tmp let-item="item">
       {{ item.label }}

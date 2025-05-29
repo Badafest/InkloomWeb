@@ -1,0 +1,9 @@
+<div class="container max-w-screen-md mx-auto relative">
+  <app-blog-preview [blog]="blog" [summary]="false" *ngIf="blog" />
+
+  <!-- Content Blocks -->
+  <app-blog-content-block
+    *ngFor="let block of blog?.content ?? []"
+    [block]="block"
+  />
+</div>

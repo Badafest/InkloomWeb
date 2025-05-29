@@ -117,7 +117,7 @@ export class AuthService extends ApiService {
     );
     const authUrl = `https://accounts.google.com/o/oauth2/v2/auth?client_id=${clientId}&response_type=token&redirect_uri=${redirectUri}&scope=${scope}&state=${state}`;
 
-    window.open(authUrl, '_blank');
+    window.open(authUrl, '_self');
   }
 
   async signInWithFacebook(redirectTo: string = '/', newUser: boolean = false) {
@@ -131,7 +131,7 @@ export class AuthService extends ApiService {
     );
 
     const authUrl = `https://www.facebook.com/v12.0/dialog/oauth?client_id=${clientId}&response_type=token&redirect_uri=${redirectUri}?state=${state}&scope=${scope}`;
-    window.open(authUrl, '_blank');
+    window.open(authUrl, '_self');
   }
 
   private handleLoginResponse(

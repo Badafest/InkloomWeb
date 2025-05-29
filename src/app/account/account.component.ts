@@ -23,6 +23,8 @@ import {
 import { FaIconComponent } from '@fortawesome/angular-fontawesome';
 import { TVariant } from '../../ui/types';
 import { ImageInputComponent } from '../../ui/image-input/image-input.component';
+import { RichTextInputComponent } from '../../ui/rich-text-input/rich-text-input.component';
+import { countHtmlCharacters } from '../../helpers';
 
 @Component({
   standalone: true,
@@ -35,6 +37,7 @@ import { ImageInputComponent } from '../../ui/image-input/image-input.component'
     InputGroupComponent,
     ButtonComponent,
     ImageInputComponent,
+    RichTextInputComponent,
   ],
 })
 export class AccountComponent {
@@ -92,12 +95,12 @@ export class AccountComponent {
     }));
   };
 
-  handleAboutChange: EventListener = (event) => {
-    const updatedAbout = (event.target as HTMLTextAreaElement).value;
+  handleAboutChange = (updatedAbout: string) => {
+    const characterCount = countHtmlCharacters(updatedAbout ?? '');
     this.updatedAccount.update((prev) => ({ ...prev, about: updatedAbout }));
-    const isValid = updatedAbout?.length <= 512;
+    const isValid = characterCount <= 512;
     this.aboutHint =
-      updatedAbout?.length > 0 ? updatedAbout.length + ' characters' : '';
+      updatedAbout?.length > 0 ? characterCount + ' characters' : '';
     this.aboutVariant = updatedAbout
       ? isValid
         ? 'success'

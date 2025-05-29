@@ -1,0 +1,99 @@
+<div class="relative mb-6 w-full flex flex-col gap-4 border-b pb-8">
+  <div
+    class="flex flex-col gap-2 {{
+      summary ? 'lg:flex-row-reverse items-stretch lg:gap-4' : ''
+    }}"
+  >
+    <div class="flex flex-col gap-2 justify-between">
+      <div class="flex flex-col gap-1">
+        <!-- TITLE -->
+        <div
+          class="flex justify-between flex-col-reverse gap-2 items-end md:flex-row md:items-start mb-2 {{
+            summary ? 'cursor-pointer' : ''
+          }}"
+          (click)="viewBlog()"
+        >
+          <h3 class="line-clamp-2">
+            {{ blog.title.trim() }}
+          </h3>
+          <div class="flex justify-end" *ngIf="blog.status !== 'PUBLISHED'">
+            <span class="blog-status-badge badge {{ blog.status }}"
+              ><fa-icon [icon]="statusIcons[blog.status]" />{{
+                blog.status
+              }}</span
+            >
+          </div>
+        </div>
+        <!-- SUBTITLE -->
+        <h5 class="text-gray line-clamp-2">
+          {{ blog.subtitle.trim() }}
+        </h5>
+      </div>
+
+      <div class="flex gap-3 justify-between items-center mt-2">
+        <!-- Author, Published Time and Reading Time -->
+        <div class="text-gray line-clamp-1 text-sm md:text-base">
+          {{ blog.author.displayName }} &bull; {{ blog.publishedDate }} &bull;
+          {{ readingTime() }} minutes
+        </div>
+
+        <!-- Action Buttons -->
+        <div class="flex gap-2 justify-end-end">
+          <app-button
+            (click)="shareBlog()"
+            classes="icon pill outline small"
+            tooltip="Share"
+          >
+            <fa-icon [icon]="faShare" data-select="button-content" />
+          </app-button>
+          <div class="flex gap-2" *ngIf="showAllActions">
+            <app-button
+              (click)="editBlog()"
+              classes="icon pill outline small"
+              tooltip="Edit"
+            >
+              <fa-icon [icon]="faEdit" data-select="button-content" />
+            </app-button>
+            <app-button
+              (click)="deleteBlog()"
+              variant="danger"
+              classes="icon pill outline small"
+              tooltip="Delete"
+            >
+              <fa-icon [icon]="faDelete" data-select="button-content" />
+            </app-button>
+            <app-button
+              (click)="archiveBlog()"
+              variant="secondary"
+              classes="icon pill outline small"
+              tooltip="Archive"
+            >
+              <fa-icon [icon]="faArchive" data-select="button-content" />
+            </app-button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- HEADER IMAGE -->
+    <div class="w-full relative {{ summary ? 'lg:max-w-xs' : '' }}">
+      <img
+        class="object-cover aspect-video rounded mx-auto"
+        [src]="blog.headerImage"
+        [alt]="blog.title"
+      />
+      <div
+        class="select-selected text-right {{
+          blog.headerImage ? 'md:absolute md:bottom-2 md:right-2 md:px-2' : ''
+        }}"
+        *ngIf="!summary"
+      >
+        @for (t of blog.tags; track $index) {
+        <span class="select-selected-item">
+          {{ t }}
+        </span>
+        }
+      </div>
+    </div>
+  </div>
+</div>

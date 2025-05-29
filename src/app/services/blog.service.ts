@@ -1,7 +1,8 @@
 import { map, Observable, Subject } from 'rxjs';
 import { ApiService } from './api.service';
 import { Injectable } from '@angular/core';
-import { Blog } from '../models/blog';
+import { Block, Blog } from '../models/blog';
+import { countHtmlCharacters } from '../../helpers';
 
 @Injectable({
   providedIn: 'root', // Service is registered in root module and available app-wide
@@ -47,7 +48,30 @@ export class BlogService extends ApiService {
   }
 
   public async saveBlog(blog: Blog, images: File[]) {
-    const formData = this.jsonToFormData({ ...blog, images });
+    const missingField = ['title', 'subtitle', 'headerImage'].find(
+      (key) => !(blog as any)[key]
+    );
+    if (missingField) {
+      this.notifications.addNotification(
+        `${
+          { title: 'Title', subtitle: 'Subtitle', headerImage: 'Header Image' }[
+            missingField
+          ]
+        } is Required`,
+        '',
+        'danger'
+      );
+      return new Observable((observer) => {
+        observer.next({ data: {} });
+        observer.complete();
+      });
+    }
+
+    const formData = this.jsonToFormData(blog);
+
+    for (const image of images) {
+      formData.append('images', image);
+    }
 
     const requestOptions = {
       body: formData,
@@ -72,8 +96,11 @@ export class BlogService extends ApiService {
     return blogResponse;
   }
 
-  public async getBlog(blogId: number) {
-    const blogResponse = await this.get<Blog>(`/blog/${blogId}`);
+  public async getBlog(blogId: number, preview = false) {
+    const blogResponse = await this.get<Blog>(
+      `/blog/${blogId}${preview ? '/preview' : ''}`,
+      { skipAuthorization: preview }
+    );
 
     blogResponse.subscribe({
       error: (error) => {
@@ -88,6 +115,22 @@ export class BlogService extends ApiService {
     return blogResponse;
   }
 
+  public async getBlogs() {
+    const blogsResponse = await this.get<Blog[]>(`/blog`);
+
+    blogsResponse.subscribe({
+      error: (error) => {
+        this.notifications.addNotification(
+          'Get Blogs Failed',
+          error.error?.message ?? error.message ?? error.toString(),
+          'danger'
+        );
+      },
+    });
+
+    return blogsResponse;
+  }
+
   private jsonToFormData(json: any) {
     const formData = new FormData();
 
@@ -96,7 +139,7 @@ export class BlogService extends ApiService {
         json[key].forEach((value: any) => {
           formData.append(
             key,
-            typeof value === 'object' ? JSON.stringify(value) : value
+            value && typeof value === 'object' ? JSON.stringify(value) : value
           );
         });
       } else {
@@ -106,5 +149,15 @@ export class BlogService extends ApiService {
     }
 
     return formData;
+  }
+
+  public estimateReadingTime(content: Block[]) {
+    const rawReadingTime = Math.round(
+      content
+        .map((block) => countHtmlCharacters(block.content ?? ''))
+        .reduce((a, b) => a + b, 0) / 250
+    );
+    // round to nearest multiple of 5
+    return (1 + Math.round(rawReadingTime / 5)) * 5;
   }
 }

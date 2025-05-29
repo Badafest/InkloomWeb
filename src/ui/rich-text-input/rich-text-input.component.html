@@ -1,5 +1,5 @@
-<div class="input-group" [attr.data-variant]="variant" data-focus="true">
-  <label *ngIf="label" [for]="id">{{ label }}</label>
+<div class="input-group {{ variant }}">
+  <label *ngIf="label" [for]="id" class="font-semibold">{{ label }}</label>
   <div class="editor-container">
     <quill-editor
       #quillEditor
@@ -16,5 +16,5 @@
       [ngClass]="focussed ? 'focussed' : ''"
     ></quill-editor>
   </div>
-  <small *ngIf="hint" class="hint">{{ hint }}</small>
+  <span *ngIf="hint" class="hint">{{ hint }}</span>
 </div>

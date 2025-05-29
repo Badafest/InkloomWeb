@@ -10,6 +10,9 @@ import { MagicLoginComponent } from './magic-login/magic-login.component';
 import { authGuard } from './guards/auth.guard';
 import { Oauth2Component } from './oauth2/oauth2.component';
 import { VerifyEmailComponent } from './verify-email/verify-email.component';
+import { BlogStudioComponent } from './blog-studio/blog-studio.component';
+import { BlogComponent } from './blog/blog.component';
+import { BlogListComponent } from './blog-list/blog-list.component';
 
 export const routes: Routes = [
   { path: 'account', component: AccountComponent, canActivate: [authGuard] },
@@ -21,8 +24,27 @@ export const routes: Routes = [
   { path: '', component: RootComponent },
   {
     path: 'studio',
-    component: StudioComponent,
     canActivate: [authGuard],
+    children: [
+      {
+        path: '',
+        component: StudioComponent,
+      },
+      {
+        path: 'blog',
+        component: BlogStudioComponent,
+      },
+    ],
+  },
+  {
+    path: 'blogs',
+    component: BlogListComponent,
+    children: [
+      {
+        path: ':id',
+        component: BlogComponent,
+      },
+    ],
   },
   {
     path: 'verify-email',

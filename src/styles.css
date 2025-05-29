@@ -95,19 +95,19 @@ h5 {
 }
 
 h4 {
-  @apply text-2xl font-semibold;
+  @apply text-xl md:text-2xl font-semibold;
 }
 
 h3 {
-  @apply text-3xl font-semibold;
+  @apply text-2xl md:text-3xl font-semibold;
 }
 
 h2 {
-  @apply text-5xl font-semibold;
+  @apply text-3xl md:text-5xl font-semibold;
 }
 
 h1 {
-  @apply text-9xl font-bold;
+  @apply text-5xl md:text-9xl font-bold;
 }
 
 dialog {
@@ -120,4 +120,20 @@ dialog {
 
 .select-selected-item {
   @apply !bg-gray-50 text-black text-sm font-semibold px-2 py-1 rounded;
+}
+
+.blog-status-badge {
+  @apply text-xs font-semibold text-white px-3 py-1 mt-2 rounded-full lowercase flex items-center gap-1;
+}
+
+.blog-status-badge.DRAFT {
+  @apply bg-primary;
+}
+
+.blog-status-badge.PUBLISHED {
+  @apply bg-success;
+}
+
+.blog-status-badge.ARCHIVED {
+  @apply bg-danger;
 }

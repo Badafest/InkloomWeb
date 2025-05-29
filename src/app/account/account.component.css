@@ -1,5 +1,5 @@
 .account-container {
-  @apply max-w-2xl w-full m-auto bg-white p-4 flex flex-col items-center gap-8;
+  @apply max-w-screen-md w-full m-auto bg-white p-4 flex flex-col items-center gap-8;
 }
 
 .verified {

@@ -1,18 +1,17 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { StudioComponent } from './studio.component';
+import { BlogStudioComponent } from './blog-studio.component';
 
 describe('StudioComponent', () => {
-  let component: StudioComponent;
-  let fixture: ComponentFixture<StudioComponent>;
+  let component: BlogStudioComponent;
+  let fixture: ComponentFixture<BlogStudioComponent>;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [StudioComponent]
-    })
-    .compileComponents();
-    
-    fixture = TestBed.createComponent(StudioComponent);
+      imports: [BlogStudioComponent],
+    }).compileComponents();
+
+    fixture = TestBed.createComponent(BlogStudioComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });

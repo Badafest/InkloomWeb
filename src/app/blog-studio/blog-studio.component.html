@@ -1,0 +1,401 @@
+<div class="editor-ui-container" (click)="handleBlurOnElements($event)">
+  <!-- Blog Editor UI -->
+  <div class="container max-w-screen-md mx-auto">
+    <!-- Top Block: Status, Title, Subtitle, Tags -->
+    <div class="editor-meta-block mb-6 w-full flex flex-col gap-2">
+      <div
+        class="flex justify-between flex-col-reverse md:flex-row gap-2 items-end md:items-start mb-2"
+      >
+        <!-- TITLE -->
+        <div class="w-full">
+          @if(currentEditing === titleId){
+          <app-input-group
+            [(ngModel)]="blog.title"
+            name="title"
+            [id]="titleId"
+            placeholder="Title"
+            variant="primary"
+            type="textarea"
+            class="text-xl md:text-3xl font-semibold font-heading"
+            [required]="true"
+          ></app-input-group>
+          }@else{
+          <h3 (click)="setEditing(titleId)" class="cursor-pointer">
+            {{ blog.title.trim().length > 0 ? blog.title.trim() : "Title" }}
+          </h3>
+          }
+        </div>
+        <span class="blog-status-badge badge {{ blog.status }}"
+          ><fa-icon [icon]="statusIcons[blog.status]" />{{ blog.status }}</span
+        >
+      </div>
+
+      <!-- SUBTITLE -->
+      <div class="w-full text-gray">
+        @if(currentEditing === subtitleId){
+        <app-input-group
+          [(ngModel)]="blog.subtitle"
+          name="subtitle"
+          placeholder="Subtitle"
+          variant="primary"
+          type="textarea"
+          [id]="subtitleId"
+          class="text-xl font-heading"
+        ></app-input-group>
+        }@else{
+        <h5 (click)="setEditing(subtitleId)" class="cursor-pointer">
+          {{
+            blog.subtitle.trim().length > 0 ? blog.subtitle.trim() : "Subtitle"
+          }}
+        </h5>
+        }
+      </div>
+
+      <!-- Author, Published Time and Reading Time -->
+      <div
+        class="flex flex-wrap justify-between items-center gap-4 mt-4 mb-2 w-full"
+      >
+        <!-- Author, Published Time and Reading Time -->
+        <div class="text-gray items-center line-clamp-1">
+          {{ blog.author.displayName }} &bull; {{ blog.publishedDate }} &bull;
+          {{ blogService.estimateReadingTime(blog.content) }} minutes
+        </div>
+        <app-button
+          (click)="blog.public = !blog.public"
+          [disabled]="false"
+          [classes]="'outline pill small'"
+          ><span data-select="button-content" class="flex gap-2">
+            <fa-icon [icon]="blog.public ? faPublic : faPrivate" />
+            <span class="flex-shrink-0">
+              Visible to {{ blog.public ? "Everyone" : "Followers" }}</span
+            >
+          </span>
+          >
+        </app-button>
+      </div>
+
+      <!-- HEADER IMAGE -->
+      <div class="w-full relative">
+        @if(currentEditing === headerImageId){
+        <app-image-input
+          [defaultImageUrl]="blog.headerImage"
+          name="headerImage"
+          [id]="headerImageId"
+          [onImageChange]="handleHeaderImageChange"
+          [video]="true"
+        ></app-image-input>
+        }@else{ @if(blog.headerImage){
+        <img
+          class="object-cover aspect-video cursor-pointer rounded mx-auto"
+          [src]="blog.headerImage"
+          [alt]="blog.title"
+          (click)="setEditing(headerImageId)"
+        />
+        }@else {
+        <span
+          (click)="setEditing(headerImageId)"
+          class="cursor-pointer text-gray flex gap-2"
+        >
+          <fa-icon [icon]="faAdd" class="text-gray"></fa-icon>Add Header
+          Image</span
+        >
+        } } @if(tags.length>0 && currentEditing!==tagsId){
+        <div
+          class="select-selected text-right {{
+            blog.headerImage && currentEditing !== headerImageId
+              ? 'md:absolute md:bottom-2 md:right-2 md:px-2'
+              : ''
+          }}"
+        >
+          @for (t of tags; track $index) {
+          <span
+            class="select-selected-item cursor-pointer"
+            (click)="setEditing(tagsId)"
+          >
+            {{ t.label }}
+          </span>
+          }
+        </div>
+        }
+      </div>
+
+      <!-- TAGS -->
+      <div class="w-full">
+        @if(currentEditing === tagsId){
+        <app-select-input
+          [placeholder]="'Add tags'"
+          [multiple]="true"
+          [loadOptions]="loadTagOptions.bind(this)"
+          [id]="tagsId"
+          [(selected)]="tags"
+          [maxLength]="10"
+        ></app-select-input>
+        }@else{ @if(tags.length === 0){
+        <span
+          (click)="setEditing(tagsId)"
+          class="cursor-pointer text-gray flex gap-2"
+          ><fa-icon [icon]="faAdd" class="text-gray"></fa-icon>Add Tags</span
+        >}}
+      </div>
+    </div>
+
+    <!-- Editor Content Blocks -->
+    <div class="editor-blocks my-4 flex flex-col gap-2">
+      <!-- No Content Placeholder -->
+      @if(blogContent.length==0 && ['', titleId, subtitleId, headerImageId,
+      tagsId].includes(currentEditing)){
+      <div class="text-center text-gray">Start by adding some elements ...</div>
+      }
+      <!-- Content Blocks -->
+      @for (block of blog.content; track block.id) {
+      <!-- EDIT MODE -->
+      @if(currentEditing===block.id){
+      <!-- EDITABLE BLOCK -->
+      <div class="w-full relative">
+        @switch (block.type) {
+        <!-- Heading -->
+        @case ('heading') {
+        <app-input-group
+          [(ngModel)]="block.content"
+          name="heading"
+          [id]="block.id"
+          placeholder="Heading"
+          variant="primary"
+          type="textarea"
+          class="text-xl md:text-2xl font-semibold font-heading mt-4"
+        ></app-input-group>
+        }
+        <!-- Subheading -->
+        @case ('subHeading') {
+        <app-input-group
+          [(ngModel)]="block.content"
+          name="subheading"
+          [id]="block.id"
+          placeholder="Subheading"
+          variant="primary"
+          type="textarea"
+          class="text-xl font-heading mt-4"
+        ></app-input-group>
+        }
+        <!-- Rich Text -->
+        @case ('richText') {
+        <app-rich-text-input
+          [(ngModel)]="block.content"
+          variant="primary"
+          class="font-serif my-3"
+          [id]="block.id"
+          placeholder="Write something..."
+        ></app-rich-text-input>
+        }
+        <!-- Codeblock -->
+        @case ('code') {
+        <div class="flex flex-col gap-0">
+          <div class="pt-2 border-t border-primary-dark">
+            <select
+              [(ngModel)]="block.metadata['language']"
+              class="border border-primary-dark rounded px-2 py-1 focus-within:border-3 bg-white"
+            >
+              @for(option of languages; track option.id){
+              <option [value]="option.value">{{ option.label }}</option>
+              }
+            </select>
+          </div>
+          <app-input-group
+            [(ngModel)]="block.content"
+            name="code"
+            [id]="block.id"
+            placeholder="Code block"
+            variant="primary"
+            type="textarea"
+            class="font-mono mt-3"
+          ></app-input-group>
+        </div>
+        }
+        <!-- Blockquote -->
+        @case ('blockquote'){
+        <div class="border-l-2 border-primary-dark pl-4">
+          <app-input-group
+            [(ngModel)]="block.content"
+            name="blockquote"
+            [id]="block.id"
+            placeholder="An inspiring quote..."
+            variant="primary"
+            type="textarea"
+            class="text-lg font-heading"
+          ></app-input-group>
+        </div>
+        }
+        <!-- Image -->
+        @case ('image') {
+        <app-image-input
+          [defaultImageUrl]="block.content"
+          [defaultImageCaption]="block.metadata['caption']"
+          [showCaption]="true"
+          name="image"
+          [id]="block.id"
+          [onImageChange]="handleImageChange(block.id)"
+          [onCaptionChange]="handleCaptionChange(block.id)"
+          class="my-3"
+        ></app-image-input>
+        }
+        <!-- Separator -->
+        @case ('separator') {
+        <div
+          class="flex items-center justify-center gap-3 my-4 cursor-pointer"
+          (click)="setEditing(block.id)"
+        >
+          @for(i of [0,1,2]; track i){
+          <span class="text-gray text-xs">&#9679;</span>
+          }
+        </div>
+        } }
+        <!-- DELETE BUTTON -->
+        <app-button
+          (click)="removeBlock(block.id)"
+          [classes]="'icon outline pill small'"
+          variant="danger"
+          class="absolute right-2 top-2 opacity-75 hover:opacity-100"
+        >
+          <fa-icon [icon]="faTrash" data-select="button-content"></fa-icon>
+        </app-button>
+      </div>
+      } @else if(block.content.length > 0 || block.type==='separator') {
+      <!-- VIEW MODE -->
+      <div
+        draggable="true"
+        (dragstart)="onDragStart($event, block.id)"
+        (dragover)="onDragOver($event)"
+        (drop)="onDrop($event, block.id)"
+        (dragend)="onDragEnd()"
+        [class.dragging]="dragBlockId === block.id"
+        [class.drag-over]="dragBlockId && dragBlockId !== block.id"
+        (click)="handleBlockClick($event, block.id)"
+        class="cursor-pointer"
+      >
+        <app-blog-content-block [block]="block" />
+      </div>
+      } }
+    </div>
+
+    <!-- Collapsible Editor Toolbar at the Bottom -->
+    <div
+      class="editor-toolbar-container flex flex-col-reverse md:flex-row justify-between mt-12"
+    >
+      <!-- Save and Publish Buttons -->
+      <div class="editor-toolbar flex gap-3 mb-4 mt-4 md:mt-0">
+        @if( blog.status === 'DRAFT' ){
+        <app-button
+          (click)="saveBlog(true)"
+          variant="success"
+          [disabled]="false"
+          [classes]="'icon outline pill'"
+          tooltip="Save Draft"
+          [disabled]="savingOrLoadingBlog"
+          ><span data-select="button-content" class="flex gap-2">
+            <fa-icon [icon]="faSave" />
+          </span>
+          >
+        </app-button>
+        }
+        <app-button
+          (click)="saveBlog(false)"
+          variant="success"
+          [disabled]="false"
+          [classes]="'icon outline pill'"
+          tooltip="Publish"
+          [disabled]="savingOrLoadingBlog"
+          ><span data-select="button-content" class="flex gap-2">
+            <fa-icon [icon]="faPublish" />
+          </span>
+          >
+        </app-button>
+      </div>
+
+      <!-- Elements Buttons -->
+      <div class="editor-toolbar flex gap-3 mb-4">
+        <div class="flex flex-wrap gap-x-3 gap-y-8 justify-end">
+          @if(showToolbar && !savingOrLoadingBlog) {
+          <!-- Heading -->
+          <app-button
+            classes="icon outline"
+            (click)="addBlock('heading')"
+            tooltip="Heading"
+          >
+            <fa-icon data-select="button-content" [icon]="faHeading"></fa-icon>
+          </app-button>
+          <!-- Subheading -->
+          <app-button
+            classes="icon outline"
+            (click)="addBlock('subHeading')"
+            tooltip="Subheading"
+          >
+            <fa-icon
+              data-select="button-content"
+              [icon]="faSubheading"
+              [classes]="['text-sm']"
+            ></fa-icon>
+          </app-button>
+          <!-- Rich Text -->
+          <app-button
+            classes="icon outline"
+            (click)="addBlock('richText')"
+            tooltip="Rich Text"
+          >
+            <fa-icon data-select="button-content" [icon]="faRichText"></fa-icon>
+          </app-button>
+          <!-- Blockquote -->
+          <app-button
+            classes="icon outline"
+            (click)="addBlock('blockquote')"
+            tooltip="Blockquote"
+          >
+            <fa-icon
+              data-select="button-content"
+              [icon]="faBlockQuote"
+            ></fa-icon>
+          </app-button>
+          <!-- Codeblock -->
+          <app-button
+            classes="icon outline"
+            (click)="addBlock('code')"
+            tooltip="Codeblock"
+          >
+            <fa-icon data-select="button-content" [icon]="faCode"></fa-icon>
+          </app-button>
+          <!-- Image -->
+          <app-button
+            classes="icon outline"
+            (click)="addBlock('image')"
+            tooltip="Image"
+          >
+            <fa-icon data-select="button-content" [icon]="faImage"></fa-icon>
+          </app-button>
+          <!-- Separator -->
+          <app-button
+            classes="icon outline"
+            (click)="addBlock('separator')"
+            tooltip="Separator"
+          >
+            <fa-icon
+              data-select="button-content"
+              [icon]="faSeparator"
+            ></fa-icon>
+          </app-button>
+          }
+        </div>
+        <app-button
+          classes="toolbar-toggle icon pill"
+          (click)="showToolbar = !showToolbar"
+          [tooltip]="showToolbar ? 'Close' : 'Add Element'"
+          [disabled]="savingOrLoadingBlog"
+        >
+          <fa-icon
+            data-select="button-content"
+            [icon]="faAdd"
+            [class]="showToolbar ? 'rotate-45' : ''"
+          ></fa-icon>
+        </app-button>
+      </div>
+    </div>
+  </div>
+</div>

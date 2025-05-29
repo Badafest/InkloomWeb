@@ -27,8 +27,8 @@ export interface Block {
 export type BlogPreview = {
   id: number;
   title: string;
-  subtitle?: string;
-  headerImage?: string;
+  subtitle: string;
+  headerImage: string;
   tags: string[];
   publishedDate: string;
   author: {
@@ -43,4 +43,5 @@ export type Blog = BlogPreview & {
   public: boolean;
   status: BlogStatus;
   content: Block[];
+  readingTime: number;
 };

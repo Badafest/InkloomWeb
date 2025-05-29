@@ -29,10 +29,16 @@ import { QuillModule, QuillEditorComponent } from 'ngx-quill';
       multi: true,
     },
   ],
+  host: {
+    '(input)': '_onChange($event.target.value)',
+    '(blur)': '_onTouch()',
+  },
 })
 export class RichTextInputComponent
   implements ControlValueAccessor, AfterViewInit
 {
+  @Input() value: string = '';
+  @Input() onChange = (_: string) => {};
   @Input() disabled: boolean = false;
   @Input() id = randomUUID();
   @Input() name = 'rich-text-input';
@@ -56,20 +62,8 @@ export class RichTextInputComponent
 
   @ViewChild('quillEditor') quillEditor?: QuillEditorComponent;
 
-  private _value = '';
-  get value(): string {
-    return this._value;
-  }
-  set value(val: string) {
-    if (val !== this._value) {
-      this._value = val;
-      this.onChange(val);
-      this.onTouched();
-    }
-  }
-
-  private onChange: (value: string) => void = () => {};
-  private onTouched: () => void = () => {};
+  _onChange: (value: string) => void = () => {};
+  _onTouched: () => void = () => {};
 
   ngAfterViewInit(): void {
     if (this.autoFocus && this.quillEditor) {
@@ -80,15 +74,15 @@ export class RichTextInputComponent
   }
 
   writeValue(value: string): void {
-    this._value = value || '';
+    this.value = value || '';
   }
 
   registerOnChange(fn: (value: string) => void): void {
-    this.onChange = fn;
+    this._onChange = fn;
   }
 
   registerOnTouched(fn: () => void): void {
-    this.onTouched = fn;
+    this._onTouched = fn;
   }
 
   setDisabledState?(isDisabled: boolean): void {
@@ -97,6 +91,8 @@ export class RichTextInputComponent
 
   onContentChange(content: string): void {
     this.value = content;
+    this.onChange(content);
+    this._onChange(content);
   }
 
   focus() {

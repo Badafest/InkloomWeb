@@ -19,7 +19,7 @@
       [variant]="nameVariant"
     />
 
-    <app-input-group
+    <app-rich-text-input
       type="textarea"
       label="About You"
       placeholder="Write about your hobbies, interests and expertise ..."
@@ -107,11 +107,13 @@
     </div>
   </div>
 
-  <p>
-    {{
-      user()?.about || "Update your profile to include something about yourself"
-    }}
-  </p>
+  <p
+    class="text-start w-full"
+    [innerHTML]="
+      user()?.about ||
+      'Tell us a bit about yourself! Update your profile to add a short bio.'
+    "
+  ></p>
 
   <div
     class="flex flex-col w-full md:grid md:grid-cols-3 gap-3 pt-4 border-t border-primary-dark"

@@ -1,0 +1,71 @@
+@if(block){ @switch (block.type) {
+<!-- Heading -->
+@case ('heading') {
+<h4 class="my-3">{{ block.content }}</h4>
+}
+<!-- Subheading -->
+@case ('subHeading') {
+<h5>{{ block.content }}</h5>
+}
+<!-- Rich Text -->
+@case ('richText') {
+<div class="font-serif my-3" [innerHTML]="block.content"></div>
+}
+<!-- Codeblock -->
+@case ('code') {
+<div class="bg-gray-50 p-3 gap-1 flex flex-col my-3">
+  <div class="flex gap-6 items-end">
+    <span class="font-mono text-sm w-full">{{
+      getLanguageName(block.metadata["language"])
+    }}</span>
+    <app-button
+      [classes]="'small outline'"
+      (click)="handleCopyCode(block)"
+      [disabled]="copyingCode"
+    >
+      <div
+        class="flex gap-2"
+        data-select="button-content"
+        [attr.ignore-click]="true"
+      >
+        <fa-icon
+          [icon]="copyingCode ? faOk : faCopy"
+          [attr.ignore-click]="true"
+        />
+        <span [attr.ignore-click]="true">Copy</span>
+      </div>
+    </app-button>
+  </div>
+  <hr class="opacity-25" />
+  <pre><code [class]=" '!bg-transparent !p-0 !m-0 hljs ' +
+            (block.metadata['language'] === 'auto' ? '' : 
+            'language-' + block.metadata['language'] || 'javascript')"
+        >{{ block.content }}
+    </code></pre>
+</div>
+}
+<!-- Blockquote -->
+@case ('blockquote'){
+<h6 class="my-3 border-l-2 border-primary-dark px-4 py-2">
+  {{ block.content }}
+</h6>
+}
+<!-- Image -->
+@case ('image') { @if(block.content){
+<div class="w-full flex flex-col gap-1 my-3">
+  <img
+    class="object-cover max-w-full"
+    [src]="block.content"
+    [alt]="block.metadata['caption']"
+  />
+  <span class="text-center">{{ block.metadata["caption"] }}</span>
+</div>
+}}
+<!-- Separator -->
+@case ('separator') {
+<div class="flex items-center justify-center gap-3 mt-4 mb-8">
+  @for(i of [0,1,2]; track i){
+  <span class="text-gray text-xs">&#9679;</span>
+  }
+</div>
+} } }

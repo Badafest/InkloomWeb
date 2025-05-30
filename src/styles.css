@@ -18,6 +18,7 @@
   --white: #fffffc;
   --gray: #4a555b;
   --gray-50: #f4f4f6;
+  --border: #c4c4c6;
   --black: #01161e;
 }
 
@@ -82,8 +83,10 @@ a:focus {
   @apply text-primary;
 }
 
-hr {
-  @apply border-primary-dark;
+hr,
+.border-b,
+.border-t {
+  @apply border-border;
 }
 
 h6 {

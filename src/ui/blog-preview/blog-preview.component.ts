@@ -43,10 +43,6 @@ export class BlogPreviewComponent {
   @Input() summary = true;
   @Input() showAllActions = false;
 
-  readingTime = computed(() =>
-    this.blogService.estimateReadingTime(this.blog?.content ?? [])
-  );
-
   constructor(
     protected blogService: BlogService,
     private router: Router,

@@ -39,12 +39,10 @@ export const routes: Routes = [
   {
     path: 'blogs',
     component: BlogListComponent,
-    children: [
-      {
-        path: ':id',
-        component: BlogComponent,
-      },
-    ],
+  },
+  {
+    path: 'blogs/:id',
+    component: BlogComponent,
   },
   {
     path: 'verify-email',

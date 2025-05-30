@@ -2,8 +2,18 @@
   <app-blog-preview [blog]="blog" [summary]="false" *ngIf="blog" />
 
   <!-- Content Blocks -->
-  <app-blog-content-block
-    *ngFor="let block of blog?.content ?? []"
-    [block]="block"
-  />
+  @if(blogLoading){
+  <div class="flex flex-col gap-4">
+    <app-loading />
+    <app-loading [gridHeight]="100" />
+    <app-loading />
+  </div>
+  }@else {
+  <div class="flex flex-col gap-1">
+    <app-blog-content-block
+      *ngFor="let block of blog?.content ?? []"
+      [block]="block"
+    />
+  </div>
+  }
 </div>

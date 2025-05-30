@@ -31,6 +31,7 @@ export type BlogPreview = {
   headerImage: string;
   tags: string[];
   publishedDate: string;
+  readingTime: number;
   author: {
     username: string;
     displayName: string;

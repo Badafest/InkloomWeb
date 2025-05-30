@@ -1,4 +1,12 @@
-<div class="flex justify-center items-center h-[75vh] w-full gap-4">
-  <fa-icon [icon]="faSpinner" [classes]="['animate-spin', 'text-xl']" />
-  <h4>Please Wait ...</h4>
+<!-- Skeleton loader -->
+<div class="flex flex-col gap-4 w-full">
+  <div *ngFor="let line of grid" class="flex gap-2">
+    <div
+      *ngFor="let width of line"
+      class="bg-gray-50 rounded animate-pulse"
+      [ngStyle]="{ width, padding }"
+    >
+      <!-- {{ width }} -->
+    </div>
+  </div>
 </div>

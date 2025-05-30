@@ -1,8 +1,15 @@
 import { map, Observable, Subject } from 'rxjs';
 import { ApiService } from './api.service';
 import { Injectable } from '@angular/core';
-import { Block, Blog } from '../models/blog';
-import { countHtmlCharacters } from '../../helpers';
+import { Blog, BlogStatus } from '../models/blog';
+
+export type BlogFilter = {
+  status?: BlogStatus;
+  author?: string;
+  tags?: string[];
+  searchText?: string;
+  page?: number;
+};
 
 @Injectable({
   providedIn: 'root', // Service is registered in root module and available app-wide
@@ -115,8 +122,11 @@ export class BlogService extends ApiService {
     return blogResponse;
   }
 
-  public async getBlogs() {
-    const blogsResponse = await this.get<Blog[]>(`/blog`);
+  public async getBlogs(isPublic = false, filter: BlogFilter = {}) {
+    const blogsResponse = await this.get<Blog[]>(
+      `/blog${isPublic ? '/public' : ''}`,
+      { params: filter, skipAuthorization: isPublic }
+    );
 
     blogsResponse.subscribe({
       error: (error) => {
@@ -149,15 +159,5 @@ export class BlogService extends ApiService {
     }
 
     return formData;
-  }
-
-  public estimateReadingTime(content: Block[]) {
-    const rawReadingTime = Math.round(
-      content
-        .map((block) => countHtmlCharacters(block.content ?? ''))
-        .reduce((a, b) => a + b, 0) / 250
-    );
-    // round to nearest multiple of 5
-    return (1 + Math.round(rawReadingTime / 5)) * 5;
   }
 }

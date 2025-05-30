@@ -1,1 +1,32 @@
-<p>blog-list works!</p>
+<div class="container max-w-screen-md mx-auto relative">
+  <div class="my-6 border-b pb-6">
+    @if(pageLoading){
+    <app-loading [gridHeight]="120" />
+    }@else{
+    <div>
+      <h3>Welcome {{ userService.user()?.displayName ?? "to Inkloom" }}</h3>
+      <p class="text-gray mt-1">What are you reading today?</p>
+      <div class="mt-6">
+        <app-input-group placeholder="Type to search ...">
+          <fa-icon
+            [icon]="faSearch"
+            data-select="input-group-input-left-icon"
+          />
+        </app-input-group>
+      </div>
+    </div>
+    }
+  </div>
+  @if(pageLoading){
+  <app-loading
+    [gridPattern]="[
+      [0.4, 0.6],
+      [0.4, 0.6]
+    ]"
+  />
+  }@else {
+  <div class="flex flex-col gap-4">
+    <app-blog-preview *ngFor="let blog of blogs" [blog]="blog" />
+  </div>
+  }
+</div>

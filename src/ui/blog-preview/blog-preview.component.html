@@ -16,7 +16,10 @@
           <h3 class="line-clamp-2">
             {{ blog.title.trim() }}
           </h3>
-          <div class="flex justify-end" *ngIf="blog.status !== 'PUBLISHED'">
+          <div
+            class="flex justify-end"
+            *ngIf="blog.status !== 'PUBLISHED' && statusIcons[blog.status]"
+          >
             <span class="blog-status-badge badge {{ blog.status }}"
               ><fa-icon [icon]="statusIcons[blog.status]" />{{
                 blog.status
@@ -34,7 +37,7 @@
         <!-- Author, Published Time and Reading Time -->
         <div class="text-gray line-clamp-1 text-sm md:text-base">
           {{ blog.author.displayName }} &bull; {{ blog.publishedDate }} &bull;
-          {{ readingTime() }} minutes
+          {{ blog.readingTime }} mins
         </div>
 
         <!-- Action Buttons -->

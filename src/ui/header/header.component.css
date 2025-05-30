@@ -3,5 +3,5 @@ a {
 }
 
 a.active {
-  @apply border-b-2 border-b-primary-dark border-spacing-6;
+  @apply border-b border-b-primary-dark border-spacing-6;
 }

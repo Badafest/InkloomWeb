@@ -13,6 +13,7 @@ type TRequestOptions = {
   skipJoinUrl?: boolean;
   asPromise?: boolean;
   body?: { [k: string]: any };
+  params?: { [k: string]: any };
   destroyer?: Subject<void>;
 };
 

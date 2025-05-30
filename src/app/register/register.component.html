@@ -4,9 +4,7 @@
   (ngSubmit)="onSubmit()"
 >
   <h5 class="text-center">Join Inkloom</h5>
-  <div
-    class="flex flex-col pt-6 gap-2 justify-center border-t border-primary-dark"
-  >
+  <div class="flex flex-col pt-6 gap-2 justify-center border-t">
     @for(registerOption of ssoRegisterOptions; track registerOption.type){
     <app-button
       classes="pill outline"
@@ -25,9 +23,9 @@
   </div>
 
   <div class="flex justify-center gap-1 items-center">
-    <span class="border-b border-primary-dark w-full"></span>
+    <span class="border-b w-full"></span>
     <span class="mb-1">OR</span>
-    <span class="border-b border-primary-dark w-full"></span>
+    <span class="border-b w-full"></span>
   </div>
 
   <app-input-group
@@ -114,9 +112,7 @@
     </div>
   </app-button>
 
-  <div
-    class="flex justify-between gap-2 border-t border-t-primary-dark-50 mt-3 pt-4"
-  >
+  <div class="flex justify-between gap-2 border-t border-t-border-50 mt-3 pt-4">
     <p>
       Already have an account?
       <a class="text-right w-max" href="/login">Login instead</a>

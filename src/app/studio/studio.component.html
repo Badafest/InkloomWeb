@@ -1,26 +1,35 @@
 <div class="container max-w-screen-md mx-auto relative">
-  @if(loading){
-  <app-loading />
-  }@else {
-  <div
-    class="flex flex-wrap gap-4 justify-between items-end my-6 border-b border-primary-dark pb-6"
-  >
-    <div>
-      <h3>Welcome, {{ userService.user()?.displayName }}</h3>
-      <p class="text-gray mt-1">You can manage all your blogs here</p>
+  <div class="my-6 border-b pb-6">
+    @if(loading){
+    <app-loading [gridHeight]="100" />
+    }@else {
+    <div class="flex flex-wrap gap-4 justify-between items-end">
+      <div>
+        <h3>Welcome {{ userService.user()?.displayName }}</h3>
+        <p class="text-gray mt-1">You can manage all your blogs here</p>
+      </div>
+      <app-button variant="success" (click)="createBlog()"
+        ><span class="flex gap-2" data-select="button-content">
+          <fa-icon [icon]="faPlus" /> Create New Blog</span
+        ></app-button
+      >
     </div>
-    <app-button variant="success" (click)="createBlog()"
-      ><span class="flex gap-2" data-select="button-content">
-        <fa-icon [icon]="faPlus" /> Create New Blog</span
-      ></app-button
-    >
+    }
   </div>
   <div class="flex flex-col gap-4">
+    @if(loading){
+    <app-loading
+      [gridPattern]="[
+        [0.4, 0.6],
+        [0.4, 0.6]
+      ]"
+    />
+    }@else {
     <app-blog-preview
       *ngFor="let blog of blogs"
       [blog]="blog"
       [showAllActions]="true"
     />
+    }
   </div>
-  }
 </div>

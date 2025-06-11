@@ -99,7 +99,10 @@ export abstract class ApiService {
       );
     }
 
-    const requestOptions: { [k: string]: any } = { headers };
+    const requestOptions: { [k: string]: any } = {
+      headers,
+      params: options.params,
+    };
 
     // request body for POST, PUT and PATCH requests
     if (['post', 'put', 'patch'].includes(method)) {

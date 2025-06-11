@@ -1,9 +1,8 @@
-import { Component, computed, inject, PLATFORM_ID } from '@angular/core';
+import { Component, inject, PLATFORM_ID } from '@angular/core';
 import { Router } from '@angular/router';
 import { CommonModule, isPlatformBrowser } from '@angular/common';
 import { Blog } from '../models/blog';
 import { BlogFilter, BlogService } from '../services/blog.service';
-import { ButtonComponent } from '../../ui/button/button.component';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 import {
   faArchive,
@@ -58,11 +57,15 @@ export class BlogListComponent {
   platformId = inject(PLATFORM_ID);
 
   filter: BlogFilter = {};
+  activeTab: 'for-you' | 'following' = 'for-you';
 
   protected async fetchBlogs() {
     this.fetchingBlogs = true;
 
-    const blogsResponse = await this.blogService.getBlogs(true, this.filter);
+    const blogsResponse = await this.blogService.getBlogs(
+      this.activeTab === 'following' ? 'following' : 'public',
+      this.filter
+    );
 
     blogsResponse.subscribe({
       next: ({ data }) =>
@@ -102,5 +105,20 @@ export class BlogListComponent {
 
   createBlog() {
     this.router.navigateByUrl('/studio/blog');
+  }
+
+  private _blogSearchTimeout: any = null;
+  protected onBlogsSearch: EventListener = async (event) => {
+    const searchText = (event.target as HTMLInputElement).value;
+    this.filter.searchText = searchText;
+    this._blogSearchTimeout = setTimeout(() => {
+      this._blogSearchTimeout && clearTimeout(this._blogSearchTimeout);
+      this.fetchBlogs();
+    }, 300);
+  };
+
+  protected async onTabChange() {
+    this.activeTab = this.activeTab === 'following' ? 'for-you' : 'following';
+    return this.fetchBlogs();
   }
 }

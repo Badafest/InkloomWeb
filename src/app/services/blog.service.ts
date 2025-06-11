@@ -17,6 +17,7 @@ export type BlogFilter = {
 export class BlogService extends ApiService {
   // private _userService = inject(UserService);
   private _tagsDestoyer = new Subject<void>();
+  private _blogsDestoyer = new Subject<void>();
 
   public async getTags(search: string) {
     this._tagsDestoyer.next();
@@ -122,10 +123,20 @@ export class BlogService extends ApiService {
     return blogResponse;
   }
 
-  public async getBlogs(isPublic = false, filter: BlogFilter = {}) {
+  public async getBlogs(
+    suffix: 'public' | 'following' | '' = '',
+    filter: BlogFilter = {}
+  ) {
+    this._blogsDestoyer.next();
+    this._blogsDestoyer.complete();
+
     const blogsResponse = await this.get<Blog[]>(
-      `/blog${isPublic ? '/public' : ''}`,
-      { params: filter, skipAuthorization: isPublic }
+      `/blog${suffix.length ? '/' + suffix : ''}`,
+      {
+        params: filter,
+        skipAuthorization: suffix === 'public',
+        destroyer: this._blogsDestoyer,
+      }
     );
 
     blogsResponse.subscribe({

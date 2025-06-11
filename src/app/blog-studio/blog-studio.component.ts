@@ -1,12 +1,4 @@
-import {
-  Component,
-  inject,
-  PLATFORM_ID,
-  QueryList,
-  ViewChildren,
-  AfterViewChecked,
-  effect,
-} from '@angular/core';
+import { Component, QueryList, ViewChildren, effect } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { InputGroupComponent } from '../../ui/input-group/input-group.component';
 import { ButtonComponent } from '../../ui/button/button.component';
@@ -33,7 +25,7 @@ import {
 import { v4 as randomUUID } from 'uuid';
 import { ImageInputComponent } from '../../ui/image-input/image-input.component';
 import { UserService } from '../services/user.service';
-import { Block, BlockType, Blog, BlogStatus } from '../models/blog';
+import { BlockType, Blog } from '../models/blog';
 import {
   SelectInputComponent,
   TSelectOption,

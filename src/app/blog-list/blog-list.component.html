@@ -1,5 +1,5 @@
 <div class="container max-w-screen-md mx-auto relative">
-  <div class="my-6 border-b pb-6">
+  <div class="my-6 border-b pb-2">
     @if(pageLoading){
     <app-loading [gridHeight]="120" />
     }@else{
@@ -7,17 +7,44 @@
       <h3>Welcome {{ userService.user()?.displayName ?? "to Inkloom" }}</h3>
       <p class="text-gray mt-1">What are you reading today?</p>
       <div class="mt-6">
-        <app-input-group placeholder="Type to search ...">
+        <app-input-group
+          placeholder="Type to search ..."
+          [onChange]="onBlogsSearch"
+          [value]="filter.searchText ?? ''"
+        >
           <fa-icon
             [icon]="faSearch"
             data-select="input-group-input-left-icon"
           />
         </app-input-group>
       </div>
+      <div class="flex gap-4 mt-6">
+        <button
+          class="{{
+            activeTab === 'for-you' ? 'font-semibold' : ''
+          }} flex items-center gap-1"
+          type="button"
+          (click)="onTabChange()"
+        >
+          <span>For You</span>
+        </button>
+        <span>|</span>
+        @if(userService.user()!==null){
+        <button
+          class="{{
+            activeTab === 'following' ? 'font-semibold' : ''
+          }} flex items-center gap-1"
+          type="button"
+          (click)="onTabChange()"
+        >
+          <span>Following</span>
+        </button>
+        }
+      </div>
     </div>
     }
   </div>
-  @if(pageLoading){
+  @if(pageLoading || fetchingBlogs){
   <app-loading
     [gridPattern]="[
       [0.4, 0.6],
@@ -25,8 +52,9 @@
     ]"
   />
   }@else {
-  <div class="flex flex-col gap-4">
+  <div class="flex flex-col gap-4" *ngIf="blogs.length > 0">
     <app-blog-preview *ngFor="let blog of blogs" [blog]="blog" />
   </div>
+  <div class="py-2 text-gray">No Blogs Found :(</div>
   }
 </div>

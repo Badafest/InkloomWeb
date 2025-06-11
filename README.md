@@ -1,27 +1,77 @@
-# InkloomWeb
+# Inkloom Web
 
-This project was generated with [Angular CLI](https://github.com/angular/angular-cli) version 17.3.1.
+Inkloom Web is a modern, full-featured blogging platform built with Angular, Express, and Tailwind CSS. It provides a seamless experience for both readers and writers, with a focus on beautiful design, rich content editing, and social features.
 
-## Development server
+## Features
 
-Run `ng serve` for a dev server. Navigate to `http://localhost:4200/`. The application will automatically reload if you change any of the source files.
+- **Blog Studio**: Rich text, code, image, and blockquote editing with drag-and-drop and live preview.
+- **Authentication**: Email/password, magic link, and OAuth2 (Google, Facebook) login/register flows.
+- **Account Management**: Profile editing, avatar upload, and account deletion.
+- **Blog Management**: Draft, publish, archive, and delete blogs. Tagging and search support.
+- **Responsive UI**: Built with Tailwind CSS for a modern, mobile-friendly experience.
+- **Server-Side Rendering**: Fast initial loads and SEO-friendly via Angular SSR and Express.
 
-## Code scaffolding
+## Getting Started
 
-Run `ng generate component component-name` to generate a new component. You can also use `ng generate directive|pipe|service|class|guard|interface|enum|module`.
+### Prerequisites
 
-## Build
+- [Node.js](https://nodejs.org/) v20+
+- [Angular CLI](https://angular.io/cli)
 
-Run `ng build` to build the project. The build artifacts will be stored in the `dist/` directory.
+### Installation
 
-## Running unit tests
+```sh
+npm install
+```
 
-Run `ng test` to execute the unit tests via [Karma](https://karma-runner.github.io).
+### Environment Variables
 
-## Running end-to-end tests
+Copy the example environment file and update values as needed:
 
-Run `ng e2e` to execute the end-to-end tests via a platform of your choice. To use this command, you need to first add a package that implements end-to-end testing capabilities.
+```sh
+cp src/environments/environment.example.ts src/environments/environment.ts
+```
 
-## Further help
+Edit `src/environments/environment.ts` for your API and OAuth credentials.
 
-To get more help on the Angular CLI use `ng help` or go check out the [Angular CLI Overview and Command Reference](https://angular.io/cli) page.
+### Development Server
+
+```sh
+npm start
+```
+
+Visit [http://localhost:4200](http://localhost:4200) in your browser.
+
+### Build
+
+```sh
+npm run build
+```
+
+The build artifacts will be stored in the `dist/` directory.
+
+### Server-Side Rendering (SSR)
+
+```sh
+npm run build
+node dist/inkloom-web/server/server.mjs
+```
+
+### Running Tests
+
+```sh
+npm test
+```
+
+## Project Structure
+
+- `src/app/` — Angular application code (components, services, models)
+- `server.ts` — Express SSR server
+- `tailwind.config.js` — Tailwind CSS configuration
+- `src/environments/` — Environment configs
+
+## Main Scripts
+
+- `npm start` — Start dev server
+- `npm run build` — Build for production
+- `npm test` — Run tests
